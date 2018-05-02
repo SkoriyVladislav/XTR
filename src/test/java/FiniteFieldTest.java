@@ -8,7 +8,7 @@ public class FiniteFieldTest {
     @Test
     public void testSize() {
 
-        FiniteField finiteField = new FiniteField(2,3, "src/main/resources/FiniteField.txt");
-        assertEquals(finiteField.getSize(), Math.pow(2, 3));
+        FiniteField finiteField = new FiniteField(2,7, "src/main/resources/FiniteField.txt");
+        assertEquals(finiteField.getSize(), Math.pow(2, 7));
     }
 }
