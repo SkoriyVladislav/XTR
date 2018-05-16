@@ -93,7 +93,7 @@ public class Polynomial implements Comparable{
           r ← r − t * d
           return (q, r)
      */
-    public Polynomial[] divides( Polynomial b ){
+    public Polynomial divides( Polynomial b ){
         Polynomial q = new Polynomial( 0, 0 );
         Polynomial r = new Polynomial( this );
         while( !r.isZero() && r.degree() >= b.degree() ){
@@ -104,8 +104,8 @@ public class Polynomial implements Comparable{
             r = r.minus( t.times( b ) );
         }//end while
 
-        System.out.printf( "(%s) / (%s): %s, %s", this, b, q, r );
-        return new Polynomial[]{ q, r };
+        //System.out.printf( "(%s) / (%s): %s, %s", this, b, q, r );
+        return r;
     }
 
 
@@ -176,6 +176,14 @@ public class Polynomial implements Comparable{
             }else if( i > 1 ) s = s + "x^" + i;
         }
         return s;
+    }
+
+    public int[] getCoef() {
+        return coef;
+    }
+
+    public void setCoef(int[] coef) {
+        this.coef = coef;
     }
 
     public Polynomial reduction(int baseField) {
