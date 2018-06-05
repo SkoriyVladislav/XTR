@@ -9,6 +9,7 @@ public class IrreduciblePolynomials {
         irreduciblePolynomials.put( new Polynomial(1, 1), new Polynomial(1,0)); // x + 1
         irreduciblePolynomials.put( new Polynomial(1, 2), new Polynomial(1,1).plus(new Polynomial(1, 0))); // x^2 + x + 1
         irreduciblePolynomials.put( new Polynomial(1, 3), new Polynomial(1,2).plus(new Polynomial(1, 0))); // x^3 + x^2 + 1
+        irreduciblePolynomials.put( new Polynomial(1, 4), new Polynomial(1,1).plus(new Polynomial(1, 0))); // x^4 + x + 1
 
         irreduciblePolynomials.put( new Polynomial(1, 7), new Polynomial(1,6).plus(
                 new Polynomial(1, 5)).plus(

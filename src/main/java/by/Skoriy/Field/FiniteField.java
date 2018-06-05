@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.SortedMap;
 
 public class FiniteField {
     private HashMap<Polynomial, Polynomial> field = new HashMap<>();
@@ -28,11 +27,12 @@ public class FiniteField {
         pol = pol.plus(pl);
 
         Polynomial temp = pl;
+        Polynomial temp1 = pl;
         for (int i = 1; i <= degree - 1; i++) {
             for (int j = 0; j < i; j++) {
-                temp = reductionMult(temp.times(temp));
+                temp1 = reductionMult(temp1.times(pl), degree, base);
             }
-            pol = reductionAdd(pol.plus(temp));
+            pol = reductionAdd(pol.plus(temp1), base);
         }
         return pol;
     }
@@ -93,7 +93,7 @@ public class FiniteField {
         return  polynomial;
     }
 
-    private Polynomial reductionAdd(Polynomial polynomial) {
+    public static Polynomial reductionAdd(Polynomial polynomial, int base) {
         int[] arr = polynomial.getCoef();
         for (int i = 0; i < arr.length; i++) {
             arr[i] %= 2;
@@ -105,13 +105,13 @@ public class FiniteField {
         return  polynomial;
     }
 
-    private Polynomial reductionMult(Polynomial polynomial) {
+    public static Polynomial reductionMult(Polynomial polynomial, int degree, int base) {
 
         if (polynomial.degree() >= degree) {
 
             Polynomial temp = IrreduciblePolynomials.getIrreduciblePolynomials(degree);
 
-            return polynomial.divides(temp);
+            return reductionAdd(polynomial.divides(temp), base);
         }
 
         return  polynomial;
