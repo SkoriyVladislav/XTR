@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FiniteFieldTest {
 
-    @Test
+    /*@Test
     public void testSize() {
 
         FiniteField finiteField = new FiniteField(2,7, "src/main/resources/FiniteField.txt");
@@ -18,10 +18,10 @@ public class FiniteFieldTest {
 
     @Test
     public void testTr() {
-        FiniteField finiteField = new FiniteField(2, 7, "src/main/resources/FiniteField.txt");
+        FiniteField finiteField = new FiniteField(2, 4, "src/main/resources/FiniteField.txt");
         HashMap<Polynomial, Polynomial> hashMap = finiteField.getField();
         for (Map.Entry e : hashMap.entrySet()) {
-            System.out.println("Tr( " + e.getValue() + ") = " + finiteField.tr((Polynomial)e.getValue()));
+            System.out.println("Tr( " + e.getValue() + ") = " + finiteField.trace((Polynomial)e.getValue()));
         }
-    }
+    }*/
 }

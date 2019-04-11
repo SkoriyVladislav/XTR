@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.SortedMap;
 
 public class FiniteField {
     private HashMap<Polynomial, Polynomial> field = new HashMap<>();
@@ -23,16 +22,16 @@ public class FiniteField {
         initField();
     }
 
-    public Polynomial tr(Polynomial pl) {
+    public Polynomial trace(Polynomial pl) {
         Polynomial pol = new Polynomial(0 , 0);
         pol = pol.plus(pl);
 
         Polynomial temp = pl;
         for (int i = 1; i <= degree - 1; i++) {
             for (int j = 0; j < i; j++) {
-                temp = reductionMult(temp.times(temp));
+                temp = FiniteField.times(temp, pl, degree, base);
             }
-            pol = reductionAdd(pol.plus(temp));
+            pol = FiniteField.plus(pol, temp, base);
         }
         return pol;
     }
@@ -58,21 +57,22 @@ public class FiniteField {
         try (FileWriter writer = new FileWriter(file)) {
 
             writer.write(unit.toString() + " = " + new Polynomial(1, 0).toString() + "\n");
-            field.put(new Polynomial(1, 0), new Polynomial(1, 0));
+            //field.put(new Polynomial(1, 0), new Polynomial(1, 0));
 
             for ( ; ; i++) {
-                temp = reduction(temp.times(first));
+                temp = FiniteField.reduction(temp.times(first), degree, base);
                 if (temp.equals(unit)) {
                     if (i + 1 != Math.pow(base, degree))
-                    writer.write("The field is not complete \n");
+                        writer.write("The field is not complete \n");
                     break;
                 }
+                System.out.println(i);
                 writer.write(new Polynomial(1, i).toString() + " = " + temp.toString() + "\n");
-                field.put(new Polynomial(1, i), temp);
+                //field.put(new Polynomial(1, i), temp);
             }
 
             writer.write(new Polynomial(0, i).toString() + " = " + new Polynomial(0, 0).toString());
-            field.put(new Polynomial(1, field.size()), new Polynomial(0, 0));
+            //field.put(new Polynomial(1, field.size()), new Polynomial(0, 0));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,22 +81,52 @@ public class FiniteField {
         size = i + 1;
     }
 
-    private Polynomial reduction(Polynomial polynomial) {
+    public static Polynomial getPolynomInDegree(Polynomial polynomial,int degreePol, int degreeField, int base) {
+        Polynomial temp = polynomial;
+        Polynomial first = new Polynomial(1, 1);
 
+        for ( int i = 1; i <= degreePol; i++) {
+            temp = reduction(temp.times(first), degreeField, base);
+            //System.out.println(i + " = " + temp);
+        }
+
+        return temp;
+    }
+
+    private static Polynomial reduction(Polynomial polynomial, int degree, int base) {
         if (polynomial.degree() >= degree) {
-
             Polynomial temp = IrreduciblePolynomials.getIrreduciblePolynomials(degree);
-
             return polynomial.minus(new Polynomial(1, degree)).plus(temp).reduction(base);
         }
 
         return  polynomial;
     }
 
-    private Polynomial reductionAdd(Polynomial polynomial) {
+    /*public static Polynomial getPolynomByDegree(int base, int degreeField, int degreePolynom){
+
+        Polynomial temp = new Polynomial(1, 0);
+        Polynomial first = new Polynomial(1, 1);
+        Polynomial unit = new Polynomial(1, 0);
+
+        for ( int i = 1; ; i++) {
+            temp = reduction(temp.times(first));
+            if (temp.equals(unit)) {
+                if (i + 1 != Math.pow(base, degree)) {
+                    writer.write("The field is not complete \n");
+                }
+                break;
+            }
+            writer.write(new Polynomial(1, i).toString() + " = " + temp.toString() + "\n");
+            field.put(new Polynomial(1, i), temp);
+        }
+    }*/
+
+    public static Polynomial plus(Polynomial p1, Polynomial p2, int base) {
+        Polynomial polynomial = p1.plus(p2);
         int[] arr = polynomial.getCoef();
         for (int i = 0; i < arr.length; i++) {
             arr[i] %= 2;
+
             if (arr[i] < 0) {
                 arr[i] += base;
             }
@@ -105,15 +135,12 @@ public class FiniteField {
         return  polynomial;
     }
 
-    private Polynomial reductionMult(Polynomial polynomial) {
-
+    public static Polynomial times(Polynomial p1, Polynomial p2, int degree, int base) {
+        Polynomial polynomial = p1.times(p2);
         if (polynomial.degree() >= degree) {
-
             Polynomial temp = IrreduciblePolynomials.getIrreduciblePolynomials(degree);
-
-            return polynomial.divides(temp);
+            return plus(polynomial, temp, base);
         }
-
         return  polynomial;
     }
 
@@ -143,18 +170,6 @@ public class FiniteField {
 
     public HashMap<Polynomial, Polynomial> getField() {
         return field;
-    }
-
-    public void setField(HashMap<Polynomial, Polynomial> field) {
-        this.field = field;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
     @Override
