@@ -85,8 +85,8 @@ public class FiniteField {
         Polynomial temp = polynomial;
         Polynomial first = new Polynomial(1, 1);
 
-        for ( int i = 1; i <= degreePol; i++) {
-            temp = reduction(temp.times(first), degreeField, base);
+        for ( int i = 1; i < degreePol; i++) {
+            temp = FiniteField.times(temp, polynomial, degreeField, base);
             //System.out.println(i + " = " + temp);
         }
 
@@ -123,25 +123,29 @@ public class FiniteField {
 
     public static Polynomial plus(Polynomial p1, Polynomial p2, int base) {
         Polynomial polynomial = p1.plus(p2);
-        int[] arr = polynomial.getCoef();
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] %= 2;
-
-            if (arr[i] < 0) {
-                arr[i] += base;
-            }
-        }
-        polynomial.setCoef(arr);
-        return  polynomial;
+        return divideByBase(polynomial, base);
     }
 
     public static Polynomial times(Polynomial p1, Polynomial p2, int degree, int base) {
         Polynomial polynomial = p1.times(p2);
         if (polynomial.degree() >= degree) {
-            Polynomial temp = IrreduciblePolynomials.getIrreduciblePolynomials(degree);
-            return plus(polynomial, temp, base);
+            Polynomial generating = IrreduciblePolynomials.getIrreduciblePolynomials(degree);
+            polynomial = polynomial.remainder(generating);
+            return divideByBase(polynomial, base);
         }
         return  polynomial;
+    }
+
+    private static Polynomial divideByBase(Polynomial polynomial, int base) {
+        int[] arr = polynomial.getCoef();
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] %= 2;
+            if (arr[i] < 0) {
+                arr[i] += base;
+            }
+        }
+        polynomial.setCoef(arr);
+        return polynomial;
     }
 
     public int getBase() {

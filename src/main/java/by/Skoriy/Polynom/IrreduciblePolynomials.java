@@ -56,6 +56,6 @@ public class IrreduciblePolynomials {
     }
 
     public static Polynomial getIrreduciblePolynomials(int degree) {
-        return irreduciblePolynomials.get(new Polynomial(1, degree));
+        return new Polynomial(1, degree).plus(irreduciblePolynomials.get(new Polynomial(1, degree)));
     }
 }

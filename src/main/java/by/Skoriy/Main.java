@@ -22,13 +22,24 @@ public class Main {
                     new Polynomial(1, 1))); // 1x^16 + 1x^13 + 1x^12 + 1x^11 + 1x^9 + 1x^8 + 1x^7 + 1x^5 + 1x^4 + 1x^3 + 1x
 
     public static void main( String[] args ){
-
         int[][] H1 = getH(Main.betta, 1);
         int[][] H2 = getH(Main.betta, 3);
         int[][] H3 = getH(Main.betta, 5);
         for (int i = 0; i < M; i++) {
             for (int j = 0; j < N; j++) {
                 System.out.print(H1[i][j]) ;
+            }
+            System.out.println();
+        }
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                System.out.print(H2[i][j]) ;
+            }
+            System.out.println();
+        }
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                System.out.print(H3[i][j]) ;
             }
             System.out.println();
         }

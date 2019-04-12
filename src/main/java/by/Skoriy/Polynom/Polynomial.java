@@ -94,17 +94,28 @@ public class Polynomial implements Comparable{
           return (q, r)
      */
     public Polynomial divides( Polynomial b ){
-        Polynomial q = new Polynomial( 0, 0 );
-        Polynomial r = new Polynomial( this );
-        while( !r.isZero() && r.degree() >= b.degree() ){
+        Polynomial q = new Polynomial(0,0);
+        Polynomial r = new Polynomial(this);
+        while(!r.isZero() && r.degree() >= b.degree()){
             int coef = r.coeff() / b.coeff();
             int deg = r.degree() - b.degree();
-            Polynomial t = new Polynomial( coef, deg );
-            q = q.plus( t );
-            r = r.minus( t.times( b ) );
-        }//end while
+            Polynomial t = new Polynomial(coef, deg);
+            q = q.plus(t);
+            r = r.minus(t.times(b));
+        }
+        return q;
+    }
 
-        //System.out.printf( "(%s) / (%s): %s, %s", this, b, q, r );
+    public Polynomial remainder(Polynomial b) {
+        Polynomial q = new Polynomial(0,0);
+        Polynomial r = new Polynomial(this);
+        while(!r.isZero() && r.degree() >= b.degree()){
+            int coef = r.coeff() / b.coeff();
+            int deg = r.degree() - b.degree();
+            Polynomial t = new Polynomial(coef, deg);
+            q = q.plus(t);
+            r = r.minus(t.times(b));
+        }
         return r;
     }
 
