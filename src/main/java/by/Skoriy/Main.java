@@ -23,23 +23,35 @@ public class Main {
 
     public static void main( String[] args ){
         int[][] H1 = getH(Main.betta, 1);
-        int[][] H2 = getH(Main.betta, 3);
-        int[][] H3 = getH(Main.betta, 5);
+        int[][] H3 = getH(Main.betta, 3);
+        int[][] H5 = getH(Main.betta, 5);
+        printH(H1);
+        int rang = 1;
+        for (int k = 0; k < N; k++) {
+            boolean flag = true;
+            for (int i = 0; i < M; i++) {
+                int sum = 0;
+                for (int j = 0; j < k; j++) {
+                    sum+= H1[i][j];
+                }
+                System.out.println("Sum in string " + (i+1) + " for " + (k+1) + " : " + sum);
+                if (sum != 0 && sum % 2 == 0) {
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag) {
+                rang = k;
+            }
+        }
+
+        System.out.println(rang);
+    }
+
+    private static void printH(int[][] H1) {
         for (int i = 0; i < M; i++) {
             for (int j = 0; j < N; j++) {
                 System.out.print(H1[i][j]) ;
-            }
-            System.out.println();
-        }
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                System.out.print(H2[i][j]) ;
-            }
-            System.out.println();
-        }
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                System.out.print(H3[i][j]) ;
             }
             System.out.println();
         }
