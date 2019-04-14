@@ -26,26 +26,62 @@ public class Main {
         int[][] H3 = getH(Main.betta, 3);
         int[][] H5 = getH(Main.betta, 5);
         printH(H1);
-        int rang = 1;
-        for (int k = 0; k < N; k++) {
-            boolean flag = true;
-            for (int i = 0; i < M; i++) {
+
+        System.out.println(check2(H1));
+
+        int dist = -1;
+
+        System.out.println("Rang = " + dist);
+    }
+
+    private static boolean check2(int[][] array) {
+        boolean flag = false;
+
+        for (int count = 0; count + 1 < N; count++) {
+            for (int i = 0, j = count + 1 ; i < M; i++) {
+
                 int sum = 0;
-                for (int j = 0; j < k; j++) {
-                    sum+= H1[i][j];
-                }
-                System.out.println("Sum in string " + (i+1) + " for " + (k+1) + " : " + sum);
-                if (sum != 0 && sum % 2 == 0) {
+                sum += array[i][count];
+                sum += array[i][j + i];
+                if (sum % 2 == 1) {
                     flag = false;
                     break;
+                } else  {
+                    flag = true;
                 }
             }
-            if(flag) {
-                rang = k;
+
+            if (flag) {
+                System.out.println(count + " ");
+                return true;
             }
         }
+        return false;
+    }
 
-        System.out.println(rang);
+    private static boolean check3(int[][] array) {
+        boolean flag = false;
+
+        for (int count = 0; count + 2 < N; count++) {
+            for (int i = 0, j = count + 1, k = j + 1 ; i < M; i++) {
+                int sum = 0;
+                sum += array[i][count];
+                sum += array[i][j];
+                sum += array[i][k + j];
+                if (sum % 2 == 1) {
+                    flag = false;
+                    break;
+                } else  {
+                    flag = true;
+                }
+            }
+
+            if (flag) {
+                System.out.println(count + " ");
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void printH(int[][] H1) {
