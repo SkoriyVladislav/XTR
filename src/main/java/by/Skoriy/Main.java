@@ -3,9 +3,13 @@ package by.Skoriy;
 import by.Skoriy.Field.FiniteField;
 import by.Skoriy.Polynom.Polynomial;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 public class Main {
-    public static int N = 49;
-    public static int M = 21;
+    public static int N = 31;
+    public static int M = 5;
     //public static int POWER_ALPHA = 42799; // (2^21 - 1)/49 = 42799
     public static int BASE = 2;
 
@@ -22,19 +26,39 @@ public class Main {
                     new Polynomial(1, 1))); // 1x^16 + 1x^13 + 1x^12 + 1x^11 + 1x^9 + 1x^8 + 1x^7 + 1x^5 + 1x^4 + 1x^3 + 1x
 
     public static void main( String[] args ){
-        int[][] H1 = getH(Main.betta, 1);
+        int[][] H1 = getH(Main.getBetta(1, M, 2), 1);
         int[][] H3 = getH(Main.betta, 3);
-        int[][] H5 = getH(Main.betta, 5);
+        int[][] H5 = getH(Main.getBetta(1, M, 2), 5);
         printH(H1);
 
-        System.out.println(check2(H1));
+        int dist = getDistance(H5);
 
-        int dist = -1;
-
-        System.out.println("Rang = " + dist);
+        System.out.println("Distance = " + dist);
     }
 
-    private static boolean check2(int[][] array) {
+    private static int getDistance(int[][] H){
+        Integer[] arr = new Integer[N];
+        for(int i = 0; i < N; i++) {
+            arr[i] = i;
+        }
+
+        List<List<Integer>> powerSet = new LinkedList<>();
+        for (int i = 1; i <= 5; i++) {
+            powerSet.addAll(PermutationSimple.combination(Arrays.asList(arr), i));
+        }
+
+        for (List<Integer> indexes : powerSet) {
+            boolean flag = check(H, indexes);
+            if (flag) {
+                System.out.println(indexes);
+                return indexes.size();
+            }
+        }
+
+        return -1;
+    }
+
+    /*private static boolean check2(int[][] array) {
         boolean flag = false;
 
         for (int count = 0; count + 1 < N; count++) {
@@ -57,32 +81,28 @@ public class Main {
             }
         }
         return false;
-    }
+    }*/
 
-    private static boolean check3(int[][] array) {
+    private static boolean check(int[][] array, List<Integer> indexes) {
         boolean flag = false;
+        for (int i = 0; i < M; i++) {
+            int sum = 0;
 
-        for (int count = 0; count + 2 < N; count++) {
-            for (int i = 0, j = count + 1, k = j + 1 ; i < M; i++) {
-                int sum = 0;
-                sum += array[i][count];
-                sum += array[i][j];
-                sum += array[i][k + j];
-                if (sum % 2 == 1) {
-                    flag = false;
-                    break;
-                } else  {
-                    flag = true;
-                }
+            for(Integer index : indexes) {
+                sum += array[i][index];
             }
 
-            if (flag) {
-                System.out.println(count + " ");
-                return true;
+            if (sum % 2 == 1) {
+                return false;
+            } else  {
+                flag = true;
             }
         }
-        return false;
+
+        return flag;
     }
+
+
 
     private static void printH(int[][] H1) {
         for (int i = 0; i < M; i++) {
