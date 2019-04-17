@@ -3,18 +3,19 @@ package by.Skoriy;
 import by.Skoriy.Field.FiniteField;
 import by.Skoriy.Polynom.Polynomial;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Main {
-    public static int N = 31;
-    public static int M = 5;
-    //public static int POWER_ALPHA = 42799; // (2^21 - 1)/49 = 42799
+    public static int N = 43;
+    public static int M = 14;
+    //public static int POWER_ALPHA = 42799; // (2^21 - 1)/49 = 42799   (2^14-1)/43 = 381
     public static int BASE = 2;
 
     public static Polynomial betta = new Polynomial(1, 16).plus(
-            new Polynomial(1,13).plus(
+            new Polynomial(1, 13).plus(
                     new Polynomial(1, 12)).plus(
                     new Polynomial(1, 11)).plus(
                     new Polynomial(1, 9)).plus(
@@ -25,76 +26,95 @@ public class Main {
                     new Polynomial(1, 3)).plus(
                     new Polynomial(1, 1))); // 1x^16 + 1x^13 + 1x^12 + 1x^11 + 1x^9 + 1x^8 + 1x^7 + 1x^5 + 1x^4 + 1x^3 + 1x
 
-    public static void main( String[] args ){
-        int[][] H1 = getH(Main.getBetta(1, M, 2), 1);
-        int[][] H3 = getH(Main.betta, 3);
-        int[][] H5 = getH(Main.getBetta(1, M, 2), 5);
-        printH(H1);
+    public static void main(String[] args) {
+        int[][] H1 = getH(Main.getBetta(381, M, 2), 1);
+        int[][] H3 = getH(Main.getBetta(381, M, 2), 3);
+        int[][] H5 = getH(Main.getBetta(381, M, 2), 5);
 
-        int dist = getDistance(H5);
+        System.out.println("H1 = ");
+        printH(H1, M, N);
+        System.out.println();
+        getDistance(H1, M, N);
+        System.out.println();
 
-        System.out.println("Distance = " + dist);
+        System.out.println("H3 = ");
+        printH(H3, M, N);
+        System.out.println();
+        getDistance(H3, M, N);
+        System.out.println();
+
+        System.out.println("H5 = ");
+        printH(H5, M, N);
+        System.out.println();
+        getDistance(H5, M, N);
+        System.out.println();
+
+
+        int[][] H1H3 = new int[2 * M][N];
+        for (int i = 0; i < M; i++) {
+            H1H3[i] = H1[i];
+            H1H3[i + M] = H3[i];
+        }
+        System.out.println("H1H3 = ");
+        printH(H1H3, 2 * M, N);
+        System.out.println();
+        getDistance(H1H3, 2 * M, N);
+        System.out.println();
+
+        int[][] H1H3H5 = new int[3*M][N];
+        for (int i = 0; i < M; i++) {
+            H1H3H5[i] = H1[i];
+            H1H3H5[i + M] = H3[i];
+            H1H3H5[i + 2*M] = H5[i];
+        }
+        System.out.println("H1H3H5 = ");
+        printH(H1H3H5, 3 * M, N);
+        System.out.println();
+        getDistance(H1H3H5, 3 * M, N);
+        System.out.println();
     }
 
-    private static int getDistance(int[][] H){
-        Integer[] arr = new Integer[N];
-        for(int i = 0; i < N; i++) {
-            arr[i] = i;
-        }
+    public static boolean checkDistance(int[][] H, int countRow, int distance) {
+        String fileName = "C://Users//uskory//Desktop//XTR//src//main//resources//Combination" + distance + ".txt";
+        //read file into stream, try-with-resources
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(fileName))) {
 
-        List<List<Integer>> powerSet = new LinkedList<>();
-        for (int i = 1; i <= 5; i++) {
-            powerSet.addAll(PermutationSimple.combination(Arrays.asList(arr), i));
-        }
+            return br.lines().anyMatch(s -> {
 
-        for (List<Integer> indexes : powerSet) {
-            boolean flag = check(H, indexes);
-            if (flag) {
-                System.out.println(indexes);
-                return indexes.size();
-            }
-        }
+                String[] arr = s.split(" ");
+                int[] indexes = new int[distance];
+                for (int i = 0; i < distance; i++) {
+                    indexes[i] = Integer.parseInt(arr[i]);
+                }                                               // get array of indexes from one line from file
 
-        return -1;
-    }
-
-    /*private static boolean check2(int[][] array) {
-        boolean flag = false;
-
-        for (int count = 0; count + 1 < N; count++) {
-            for (int i = 0, j = count + 1 ; i < M; i++) {
-
-                int sum = 0;
-                sum += array[i][count];
-                sum += array[i][j + i];
-                if (sum % 2 == 1) {
-                    flag = false;
-                    break;
-                } else  {
-                    flag = true;
+                boolean flag = check(H, indexes, countRow);
+                if (flag) {
+                    for (int i = 0; i < distance; i++) {
+                        System.out.print(indexes[i] + " ");
+                    }
+                    System.out.println();
+                    return true;
                 }
-            }
-
-            if (flag) {
-                System.out.println(count + " ");
-                return true;
-            }
+                return false;
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return false;
-    }*/
+    }
 
-    private static boolean check(int[][] array, List<Integer> indexes) {
+    private static boolean check(int[][] array, int[] indexes, int countRow) {
         boolean flag = false;
-        for (int i = 0; i < M; i++) {
+        for (int i = 0; i < countRow; i++) {
             int sum = 0;
 
-            for(Integer index : indexes) {
+            for (int index : indexes) {
                 sum += array[i][index];
             }
 
             if (sum % 2 == 1) {
                 return false;
-            } else  {
+            } else {
                 flag = true;
             }
         }
@@ -102,13 +122,32 @@ public class Main {
         return flag;
     }
 
+    private static void getDistance(int[][] H, int countRow, int N) {
 
+        for (int i = 1; i < N; i++) {
 
-    private static void printH(int[][] H1) {
-        for (int i = 0; i < M; i++) {
+            int[] arr = new int[N];
             for (int j = 0; j < N; j++) {
-                System.out.print(H1[i][j]) ;
+                arr[j] = j;
             }
+            int n = arr.length;
+            PermutationSimple.printCombination(arr, n, i); //print all combination of size i in a file.
+
+            if(checkDistance(H, countRow, i)) {
+                System.out.print("Distance = " + i);
+                break;
+            }
+        }
+    }
+
+    private static void printH(int[][] H1, int countRow, int countColumn) {
+        for (int i = 0; i < countRow; i++) {
+            int sum = 0;
+            for (int j = 0; j < countColumn; j++) {
+                sum += H1[i][j];
+                System.out.print(H1[i][j]);
+            }
+            System.out.print("  = " + sum);
             System.out.println();
         }
     }
@@ -118,7 +157,7 @@ public class Main {
         H[0][0] = 1;
 
         for (int j = 1; j < N; j++) {
-            Polynomial tempBetta = FiniteField.getPolynomInDegree( betta, j * order, M, BASE);
+            Polynomial tempBetta = FiniteField.getPolynomInDegree(betta, j * order, M, BASE);
             int[] bettaCoef = tempBetta.getCoef();
             for (int i = 0; i < M; i++) {
                 try {
