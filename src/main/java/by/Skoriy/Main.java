@@ -22,9 +22,9 @@ public class Main {
                     new Polynomial(1, 1))); // 1x^16 + 1x^13 + 1x^12 + 1x^11 + 1x^9 + 1x^8 + 1x^7 + 1x^5 + 1x^4 + 1x^3 + 1x
 
     public static void main(String[] args) {
-        int[][] H1 = getH(Main.getBetta(1, M, 2), 1);
-        int[][] H3 = getH(Main.getBetta(1, M, 2), 3);
-        int[][] H5 = getH(Main.getBetta(1, M, 2), 5);
+        int[][] H1 = getH(Main.getBetta((int)Math.pow(2, M) / N, M, 2), 1);
+        int[][] H3 = getH(Main.getBetta((int)Math.pow(2, M) / N, M, 2), 3);
+        int[][] H5 = getH(Main.getBetta((int)Math.pow(2, M) / N, M, 2), 5);
 
         System.out.println("H1 = ");
         printH(H1, M, N);
