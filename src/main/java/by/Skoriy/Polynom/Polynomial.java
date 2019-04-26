@@ -18,9 +18,21 @@ public class Polynomial implements Comparable{
 
     public Polynomial(int[] coeff){
         coef = coeff;
-        this.deg = coeff.length;
+        this.deg = coeff.length - 1;
+        simplify();
     }
 
+    private void simplify() {
+        int[] newCoef = new int[0];
+        for(int i = coef.length; i > 0; i--) {
+            if (coef[i - 1] != 0) {
+                newCoef = Arrays.copyOf(coef, i);
+                break;
+            }
+        }
+        coef = newCoef;
+        deg = coef.length - 1;
+    }
 
     public Polynomial( Polynomial p ){
         coef = new int[ p.coef.length ];

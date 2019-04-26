@@ -85,16 +85,22 @@ public class Main {
 
         Map<Integer, List<int[]>> syndromes = GeneratorSyndrome.getGeneratorsSyndrome();
         Map<Polynomial, Polynomial> polynomials = finiteField.getField();
+        Map<Integer, List<int[]>> norms;
+        int i = 2;
         for (Map.Entry<Integer, List<int[]>> syndrome : syndromes.entrySet()) {
+            System.out.println("I(1, " + i++ + ")");
+            int j = 1;
             for(int[] partOfSyndrome : syndrome.getValue()) {
                 Polynomial findPolynome = new Polynomial(partOfSyndrome);
-                System.out.print(findPolynome + " :  ");
+                System.out.print("degS("+ j++ + ")" + " = ");
                 polynomials.entrySet().stream()
                         .filter(entry -> entry.getValue().equals(findPolynome))
                         .findFirst()
-                        .ifPresent(entry -> System.out.print(entry.getKey().degree() + "  "));
+                        .ifPresent(entry -> System.out.print(entry.getKey().degree()));
                 System.out.println();
             }
+            System.out.println();
+            System.out.println();
         }
     }
 
