@@ -7,18 +7,18 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class FiniteField {
-    private HashMap<Polynomial, Polynomial> field = new HashMap<>();
-    private String fileName;
+    private Map<Polynomial, Polynomial> field = new HashMap<>();
+    private String fileName = "src/main/resources/FiniteField.txt";
     private int base;
     private int degree;
     private int size;
 
-    public FiniteField(int base, int degree, String fileName) {
+    public FiniteField(int base, int degree) {
         this.base = base;
         this.degree = degree;
-        this.fileName = fileName;
         initField();
     }
 
@@ -62,13 +62,15 @@ public class FiniteField {
             for ( ; ; i++) {
                 temp = FiniteField.reduction(temp.times(first), degree, base);
                 if (temp.equals(unit)) {
-                    if (i + 1 != Math.pow(base, degree))
+                    if (i + 1 != Math.pow(base, degree)) {
+                        System.out.println("The field is not complete");
                         writer.write("The field is not complete \n");
+                    }
                     break;
                 }
-                System.out.println(i);
+                //System.out.println(i);
                 writer.write(new Polynomial(1, i).toString() + " = " + temp.toString() + "\n");
-                //field.put(new Polynomial(1, i), temp);
+                field.put(new Polynomial(1, i), temp);
             }
 
             writer.write(new Polynomial(0, i).toString() + " = " + new Polynomial(0, 0).toString());
@@ -96,7 +98,7 @@ public class FiniteField {
     private static Polynomial reduction(Polynomial polynomial, int degree, int base) {
         if (polynomial.degree() >= degree) {
             Polynomial temp = IrreduciblePolynomials.getIrreduciblePolynomials(degree);
-            return polynomial.minus(new Polynomial(1, degree)).plus(temp).reduction(base);
+            return FiniteField.divideByBase(polynomial.remainder(temp), base);
         }
 
         return  polynomial;
@@ -172,7 +174,7 @@ public class FiniteField {
         this.size = size;
     }
 
-    public HashMap<Polynomial, Polynomial> getField() {
+    public Map<Polynomial, Polynomial> getField() {
         return field;
     }
 

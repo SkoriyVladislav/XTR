@@ -16,6 +16,11 @@ public class Polynomial implements Comparable{
         this.deg = degree();
     }
 
+    public Polynomial(int[] coeff){
+        coef = coeff;
+        this.deg = coeff.length;
+    }
+
 
     public Polynomial( Polynomial p ){
         coef = new int[ p.coef.length ];
@@ -235,7 +240,12 @@ public class Polynomial implements Comparable{
         Polynomial that = (Polynomial) o;
 
         if (deg != that.deg) return false;
-        return Arrays.equals(coef, that.coef);
+        for (int i = 0; i < that.coef.length && i < coef.length; i++) {
+            if (coef[i] != that.coef[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

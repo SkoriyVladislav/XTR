@@ -2,12 +2,18 @@ package by.Skoriy;
 
 import by.Skoriy.Field.FiniteField;
 import by.Skoriy.Polynom.Polynomial;
+import by.Skoriy.Syndroms.GeneratorSyndrome;
+
+import java.util.*;
 
 public class Main {
     public static int N = 31;
     public static int M = 5;
     //public static int POWER_ALPHA = 42799; // (2^21 - 1)/49 = 42799   (2^14-1)/43 = 381
     public static int BASE = 2;
+
+    public static int[][] message = new int[][]{{1}, {0}, {0}, {1}, {0}, {0}, {1}, {0}, {0}, {1}, {0}, {0}, {1}, {0}, {0},
+                                                {1}, {0}, {0}, {1}, {0}, {0}, {1}, {0}, {0}, {1}, {0}, {0}, {1}, {0}, {0}, {0}};
 
     public static Polynomial betta = new Polynomial(1, 16).plus(
             new Polynomial(1, 13).plus(
@@ -21,10 +27,31 @@ public class Main {
                     new Polynomial(1, 3)).plus(
                     new Polynomial(1, 1))); // 1x^16 + 1x^13 + 1x^12 + 1x^11 + 1x^9 + 1x^8 + 1x^7 + 1x^5 + 1x^4 + 1x^3 + 1x
 
+    public static int[][] H1;
+    public static int[][] H1H3;
+    public static int[][] H1H3H5;
+
+    static {
+        H1 = getH(Main.getBetta((int) Math.pow(2, M) / N, M, 2), 1);
+        int[][] H3 = getH(Main.getBetta((int) Math.pow(2, M) / N, M, 2), 3);
+        int[][] H5 = getH(Main.getBetta((int) Math.pow(2, M) / N, M, 2), 5);
+
+        H1H3 = new int[2 * M][N];
+        for (int i = 0; i < M; i++) {
+            H1H3[i] = H1[i];
+            H1H3[i + M] = H3[i];
+        }
+
+        H1H3H5 = new int[3 * M][N];
+        for (int i = 0; i < M; i++) {
+            H1H3H5[i] = H1[i];
+            H1H3H5[i + M] = H3[i];
+            H1H3H5[i + 2 * M] = H5[i];
+        }
+    }
+
     public static void main(String[] args) {
-        int[][] H1 = getH(Main.getBetta((int)Math.pow(2, M) / N, M, 2), 1);
-        int[][] H3 = getH(Main.getBetta((int)Math.pow(2, M) / N, M, 2), 3);
-        int[][] H5 = getH(Main.getBetta((int)Math.pow(2, M) / N, M, 2), 5);
+        FiniteField finiteField = new FiniteField(BASE, M);
 
         System.out.println("H1 = ");
         printH(H1, M, N);
@@ -32,42 +59,45 @@ public class Main {
         DistanceUtil.getDistance(H1, M, N);
         System.out.println();
 
-        System.out.println("H3 = ");
+        /*System.out.println("H3 = ");
         printH(H3, M, N);
         System.out.println();
-        DistanceUtil.getDistance(H3, M, N);
+        DistanceUtil.getDistance(H3, M, N);*/
         System.out.println();
 
-        System.out.println("H5 = ");
+        /*System.out.println("H5 = ");
         printH(H5, M, N);
         System.out.println();
-        DistanceUtil.getDistance(H5, M, N);
+        DistanceUtil.getDistance(H5, M, N);*/
         System.out.println();
 
-
-        int[][] H1H3 = new int[2 * M][N];
-        for (int i = 0; i < M; i++) {
-            H1H3[i] = H1[i];
-            H1H3[i + M] = H3[i];
-        }
         System.out.println("H1H3 = ");
         printH(H1H3, 2 * M, N);
         System.out.println();
         DistanceUtil.getDistance(H1H3, 2 * M, N);
         System.out.println();
 
-        int[][] H1H3H5 = new int[3*M][N];
-        for (int i = 0; i < M; i++) {
-            H1H3H5[i] = H1[i];
-            H1H3H5[i + M] = H3[i];
-            H1H3H5[i + 2*M] = H5[i];
-        }
         System.out.println("H1H3H5 = ");
         printH(H1H3H5, 3 * M, N);
         System.out.println();
         DistanceUtil.getDistance(H1H3H5, 3 * M, N);
         System.out.println();
+
+        Map<Integer, List<int[]>> syndromes = GeneratorSyndrome.getGeneratorsSyndrome();
+        Map<Polynomial, Polynomial> polynomials = finiteField.getField();
+        for (Map.Entry<Integer, List<int[]>> syndrome : syndromes.entrySet()) {
+            for(int[] partOfSyndrome : syndrome.getValue()) {
+                Polynomial findPolynome = new Polynomial(partOfSyndrome);
+                System.out.print(findPolynome + " :  ");
+                polynomials.entrySet().stream()
+                        .filter(entry -> entry.getValue().equals(findPolynome))
+                        .findFirst()
+                        .ifPresent(entry -> System.out.print(entry.getKey().degree() + "  "));
+                System.out.println();
+            }
+        }
     }
+
 
 
     private static int[][] getH(Polynomial betta, int order) {
@@ -76,10 +106,10 @@ public class Main {
 
         for (int j = 1; j < N; j++) {
             Polynomial tempBetta = FiniteField.getPolynomInDegree(betta, j * order, M, BASE);
-            int[] bettaCoef = tempBetta.getCoef();
+            int[] bettaCoeff = tempBetta.getCoef();
             for (int i = 0; i < M; i++) {
                 try {
-                    H[i][j] = bettaCoef[i];
+                    H[i][j] = bettaCoeff[i];
                 } catch (ArrayIndexOutOfBoundsException e) {
                     H[i][j] = 0;
                 }
@@ -89,6 +119,18 @@ public class Main {
         return H;
     }
 
+    public static List<int[]> getGammaOrbits(int[] array) {
+        List<int[]> gammaOrbits = new ArrayList<>(array.length + 1);
+        for (int i = 1; i < array.length / 2 + 1; i++) {
+            int[] orbit = new int[array.length];
+            orbit[0] = 1;
+            orbit[i] = 1;
+            gammaOrbits.add(orbit);
+        }
+
+        return gammaOrbits;
+    }
+
     private static void printH(int[][] H1, int countRow, int countColumn) {
         for (int i = 0; i < countRow; i++) {
             int sum = 0;
@@ -96,7 +138,7 @@ public class Main {
                 sum += H1[i][j];
                 System.out.print(H1[i][j]);
             }
-            System.out.print("  = " + sum);
+            System.out.print(" = " + sum);
             System.out.println();
         }
     }
@@ -114,6 +156,27 @@ public class Main {
                         new Polynomial(1, 3)).plus(
                         new Polynomial(1, 1))); // 1x^16 + 1x^13 + 1x^12 + 1x^11 + 1x^9 + 1x^8 + 1x^7 + 1x^5 + 1x^4 + 1x^3 + 1x*/
         return FiniteField.getPolynomInDegree(new Polynomial(1, 1), powerAlpha, m, base);
+    }
+
+    public static int[][] multiplyByMatrix(int[][] m1, int[][] m2) {
+        int m1ColLength = m1[0].length; // m1 columns length
+        int m2RowLength = m2.length;    // m2 rows length
+
+        if (m1ColLength != m2RowLength)
+            return null; // matrix multiplication is not possible
+
+        int mRRowLength = m1.length;    // m result rows length
+        int mRColLength = m2[0].length; // m result columns length
+        int[][] mResult = new int[mRRowLength][mRColLength];
+        for (int i = 0; i < mRRowLength; i++) {         // rows from m1
+            for (int j = 0; j < mRColLength; j++) {     // columns from m2
+                for (int k = 0; k < m1ColLength; k++) { // columns from m1
+                    mResult[i][j] += m1[i][k] * m2[k][j];
+                }
+                mResult[i][j] %= BASE;
+            }
+        }
+        return mResult;
     }
 
     /*
