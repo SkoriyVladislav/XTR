@@ -5,10 +5,12 @@ import by.Skoriy.Main;
 import by.Skoriy.Polynom.Polynomial;
 
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 
 public class GeneratorSyndrome {
-    private static Map<Integer, List<int[]> > generatorsSyndrome = new HashMap<>();
+    private static Map<Integer, Syndrome> generatorsSyndrome = new HashMap<>();
     static {
         for (int i = 1; i < Main.N / 2 + 1; i++) {
 
@@ -16,37 +18,57 @@ public class GeneratorSyndrome {
             coeff[0] = 1;
             coeff[i] = 1;
 
-            List<int[]> syndroms = new ArrayList<>();
-            int[] syndrome = getRowFromColumn(Main.multiplyByMatrix(Main.H1H3, getColumnFromRow(coeff)));
-            for (int j = 0; j < syndrome.length; j += Main.M) {
-                int[] subSyndrome = Arrays.copyOfRange(syndrome, j, j + Main.M);
-                syndroms.add(subSyndrome);
-            }
+            List<int[]> syndromes = getSyndrome(coeff);
+            List<int[]> normOfSyndrome = getNormeOfSyndrome(syndromes);
 
-            generatorsSyndrome.put(i, syndroms);
+            Syndrome syndrome = new Syndrome(syndromes, normOfSyndrome);
+
+            generatorsSyndrome.put(i, syndrome);
         }
     }
 
-    private static Map<Integer, List<int[]> > generatorsNorms = new HashMap<>();
-    static {
-        //TODO сделать для общего случая
+    public static Map<Integer, Syndrome> getGeneratorsSyndrome() {
+        return generatorsSyndrome;
+    }
+
+    private static List<int []> getSyndrome(int... coeff) {
+        List<int[]> syndromes = new ArrayList<>();
+        int[] syndrome = getRowFromColumn(Main.multiplyByMatrix(Main.H1H3, getColumnFromRow(coeff)));
+        for (int j = 0; j < syndrome.length; j += Main.M) {
+            int[] subSyndrome = Arrays.copyOfRange(syndrome, j, j + Main.M);
+            syndromes.add(subSyndrome);
+        }
+        return syndromes;
+    }
+
+    private static List<int []> getNormeOfSyndrome(List<int[]> syndromes) {
+        //TODO refactor this method
         List<int[]> normOfSyndrome = new ArrayList<>();
-        int[] s1 = generatorsSyndrome.get(1).get(0);
-        int[] s2 = generatorsSyndrome.get(1).get(1);
+        int[] s1 = syndromes.get(0);
+        int[] s2 = syndromes.get(1);
         int[] result;
-        Polynomial p2 = FiniteField.getPolynomInDegree(new Polynomial(s2), 3, Main.M, Main.BASE);
-        Polynomial res = new Polynomial(s1).remainder(p2);
+
+        Polynomial temp = new Polynomial(s1);
+        Polynomial p1 = FiniteField.divideByBase(FiniteField.getPolynomInDegree(temp, 3, Main.M, Main.BASE), Main.BASE).reduction(Main.BASE);
+        Polynomial p2 = new Polynomial(s2);
+
+        Map<Polynomial, Polynomial> finiteField = FiniteField.getField();
+        int degree = 30 - finiteField.entrySet().stream().filter(
+                entry -> entry.getValue().equals(p1)).findFirst().get().getKey().degree() + 1 ;
+
+        Polynomial test = new Polynomial(1, degree);
+        Polynomial reversed = finiteField.get(test);
+
+        System.out.println(FiniteField.times(FiniteField.getField().get(new Polynomial(1, 16)), FiniteField.getField().get(new Polynomial(1, 15))
+                , Main.M
+                , Main.BASE));
+
+        Polynomial res = FiniteField.times(p2, reversed, Main.M, Main.BASE);
+        res = FiniteField.divideByBase(res, Main.BASE);
         result = res.getCoef();
         normOfSyndrome.add(result);
-        generatorsNorms.put(1, normOfSyndrome);
-    }
 
-    public static Map<Integer, List<int[]>> getGeneratorsNorms() {
-        return generatorsNorms;
-    }
-
-    public static Map<Integer, List<int[]>> getGeneratorsSyndrome() {
-        return generatorsSyndrome;
+        return normOfSyndrome;
     }
 
     private static int[] getRowFromColumn(int[][] matrix) {

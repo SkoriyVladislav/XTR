@@ -217,9 +217,9 @@ public class Polynomial implements Comparable{
     public Polynomial reduction(int baseField) {
         Polynomial p = this;
 
-        Polynomial c = new Polynomial( 0, p.deg );
+        Polynomial c = new Polynomial( 0, p.deg + 1);
 
-        for (int i = 0; i < p.coef.length; i++) {
+        for (int i = 0; i < p.degree(); i++) {
             if (p.coef[i] >= baseField) {
                 c.coef[i] = p.coef[i] % baseField;
             } else {

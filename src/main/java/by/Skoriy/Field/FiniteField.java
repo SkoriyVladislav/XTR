@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FiniteField {
-    private Map<Polynomial, Polynomial> field = new HashMap<>();
+    private static Map<Polynomial, Polynomial> field = new HashMap<>();
     private String fileName = "src/main/resources/FiniteField.txt";
     private int base;
     private int degree;
@@ -133,12 +133,22 @@ public class FiniteField {
         if (polynomial.degree() >= degree) {
             Polynomial generating = IrreduciblePolynomials.getIrreduciblePolynomials(degree);
             polynomial = polynomial.remainder(generating);
-            return divideByBase(polynomial, base);
+            return simplify(polynomial, base);
         }
         return  polynomial;
     }
 
-    private static Polynomial divideByBase(Polynomial polynomial, int base) {
+    public static Polynomial simplify(Polynomial polynomial, int base) {
+        divideByBase(polynomial, base);
+        int[] coeff = polynomial.getCoef();
+
+        for(int i = polynomial.degree(); i >= 0; i--) {
+            //if (coeff == )
+        }
+        return polynomial;
+    }
+
+    public static Polynomial divideByBase(Polynomial polynomial, int base) {
         int[] arr = polynomial.getCoef();
         for (int i = 0; i < arr.length; i++) {
             arr[i] %= 2;
@@ -174,7 +184,7 @@ public class FiniteField {
         this.size = size;
     }
 
-    public Map<Polynomial, Polynomial> getField() {
+    public static Map<Polynomial, Polynomial> getField() {
         return field;
     }
 

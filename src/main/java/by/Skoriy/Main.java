@@ -3,6 +3,7 @@ package by.Skoriy;
 import by.Skoriy.Field.FiniteField;
 import by.Skoriy.Polynom.Polynomial;
 import by.Skoriy.Syndroms.GeneratorSyndrome;
+import by.Skoriy.Syndroms.Syndrome;
 
 import java.util.*;
 
@@ -83,16 +84,24 @@ public class Main {
         DistanceUtil.getDistance(H1H3H5, 3 * M, N);
         System.out.println();
 
-        Map<Integer, List<int[]>> syndromes = GeneratorSyndrome.getGeneratorsSyndrome();
+        Map<Integer, Syndrome> syndromes = GeneratorSyndrome.getGeneratorsSyndrome();
         Map<Polynomial, Polynomial> polynomials = finiteField.getField();
-        Map<Integer, List<int[]>> norms = GeneratorSyndrome.getGeneratorsNorms();
         int i = 2;
-        for (Map.Entry<Integer, List<int[]>> syndrome : syndromes.entrySet()) {
+        for (Map.Entry<Integer, Syndrome> syndrome : syndromes.entrySet()) {
             System.out.println("I(1, " + i++ + ")");
             int j = 1;
-            for(int[] partOfSyndrome : syndrome.getValue()) {
+            for(int[] partOfSyndrome : syndrome.getValue().getSyndromes()) {
                 Polynomial findPolynome = new Polynomial(partOfSyndrome);
                 System.out.print("degS("+ j++ + ")" + " = ");
+                polynomials.entrySet().stream()
+                        .filter(entry -> entry.getValue().equals(findPolynome))
+                        .findFirst()
+                        .ifPresent(entry -> System.out.print(entry.getKey().degree()));
+                System.out.println();
+            }
+            for(int[] partOfSyndrome : syndrome.getValue().getNormOfSyndrome()) {
+                Polynomial findPolynome = new Polynomial(partOfSyndrome);
+                System.out.print("deg(N(S))" + " = ");
                 polynomials.entrySet().stream()
                         .filter(entry -> entry.getValue().equals(findPolynome))
                         .findFirst()
