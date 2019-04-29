@@ -85,7 +85,7 @@ public class Main {
 
         Map<Integer, List<int[]>> syndromes = GeneratorSyndrome.getGeneratorsSyndrome();
         Map<Polynomial, Polynomial> polynomials = finiteField.getField();
-        Map<Integer, List<int[]>> norms;
+        Map<Integer, List<int[]>> norms = GeneratorSyndrome.getGeneratorsNorms();
         int i = 2;
         for (Map.Entry<Integer, List<int[]>> syndrome : syndromes.entrySet()) {
             System.out.println("I(1, " + i++ + ")");
@@ -102,6 +102,7 @@ public class Main {
             System.out.println();
             System.out.println();
         }
+
     }
 
 
