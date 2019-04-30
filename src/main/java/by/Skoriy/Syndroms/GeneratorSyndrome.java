@@ -5,8 +5,6 @@ import by.Skoriy.Main;
 import by.Skoriy.Polynom.Polynomial;
 
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 
 public class GeneratorSyndrome {
@@ -23,7 +21,7 @@ public class GeneratorSyndrome {
 
             Syndrome syndrome = new Syndrome(syndromes, normOfSyndrome);
 
-            generatorsSyndrome.put(i, syndrome);
+            generatorsSyndrome.put(i + 1, syndrome);
         }
     }
 
@@ -31,7 +29,17 @@ public class GeneratorSyndrome {
         return generatorsSyndrome;
     }
 
-    private static List<int []> getSyndrome(int... coeff) {
+    public static Syndrome getSyndromeMistakes(int[] coeff) {
+        List<int[]> syndromes = getSyndrome(coeff);
+        List<int[]> normOfSyndrome = getNormeOfSyndrome(syndromes);
+
+        Syndrome syndrome = new Syndrome(syndromes, normOfSyndrome);
+
+        return syndrome;
+    }
+
+    private static List<int []> getSyndrome(int[] coeff) {
+        //TODO refactor this method
         List<int[]> syndromes = new ArrayList<>();
         int[] syndrome = getRowFromColumn(Main.multiplyByMatrix(Main.H1H3, getColumnFromRow(coeff)));
         for (int j = 0; j < syndrome.length; j += Main.M) {
@@ -53,9 +61,9 @@ public class GeneratorSyndrome {
         Polynomial p2 = new Polynomial(s2);
 
         Map<Polynomial, Polynomial> finiteField = FiniteField.getField();
-        int degree = 31 - finiteField.entrySet().stream()
+        int degree = (31 - finiteField.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(p1))
-                .findFirst().get().getKey().degree() ;
+                .findFirst().get().getKey().degree()) % 31 ;
 
         Polynomial reversed = finiteField.get(new Polynomial(1, degree));
         Polynomial res = FiniteField.times(p2, reversed, Main.M, Main.BASE);
@@ -65,7 +73,7 @@ public class GeneratorSyndrome {
         return normOfSyndrome;
     }
 
-    private static int[] getRowFromColumn(int[][] matrix) {
+    public static int[] getRowFromColumn(int[][] matrix) {
         int[] arr = new int[matrix.length];
 
         for(int i = 0; i < matrix.length; i++) {
@@ -75,7 +83,7 @@ public class GeneratorSyndrome {
         return arr;
     }
 
-    private static int[][] getColumnFromRow(int[] matrix) {
+    public static int[][] getColumnFromRow(int[] matrix) {
         int[][] arr = new int[matrix.length][1];
 
         for(int i = 0; i < matrix.length; i++) {

@@ -76,6 +76,7 @@ public class FiniteField {
 
             writer.write(new Polynomial(0, i).toString() + " = " + new Polynomial(0, 0).toString());
             //field.put(new Polynomial(1, field.size()), new Polynomial(0, 0));
+            field.put(new Polynomial(1, 0), new Polynomial(1, 0));
 
         } catch (IOException e) {
             e.printStackTrace();

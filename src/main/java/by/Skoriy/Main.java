@@ -6,6 +6,7 @@ import by.Skoriy.Syndroms.GeneratorSyndrome;
 import by.Skoriy.Syndroms.Syndrome;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Main {
     public static int N = 31;
@@ -13,8 +14,17 @@ public class Main {
     //public static int POWER_ALPHA = 42799; // (2^21 - 1)/49 = 42799   (2^14-1)/43 = 381
     public static int BASE = 2;
 
-    public static int[][] message = new int[][]{{1}, {0}, {0}, {1}, {0}, {0}, {1}, {0}, {0}, {1}, {0}, {0}, {1}, {0}, {0},
-                                                {1}, {0}, {0}, {1}, {0}, {0}, {1}, {0}, {0}, {1}, {0}, {0}, {1}, {0}, {0}, {0}};
+    public static int[] message = new int[]{
+            0, 0, 1,
+            0, 1, 1,
+            0, 1, 1,
+            1, 0, 0,
+            0, 0, 0,
+            1, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            1, 0, 0,
+            0, 0, 0, 1};
 
     public static Polynomial betta = new Polynomial(1, 16).plus(
             new Polynomial(1, 13).plus(
@@ -63,14 +73,14 @@ public class Main {
         /*System.out.println("H3 = ");
         printH(H3, M, N);
         System.out.println();
-        DistanceUtil.getDistance(H3, M, N);*/
-        System.out.println();
+        DistanceUtil.getDistance(H3, M, N);
+        System.out.println();*/
 
         /*System.out.println("H5 = ");
         printH(H5, M, N);
         System.out.println();
-        DistanceUtil.getDistance(H5, M, N);*/
-        System.out.println();
+        DistanceUtil.getDistance(H5, M, N);
+        System.out.println();*/
 
         System.out.println("H1H3 = ");
         printH(H1H3, 2 * M, N);
@@ -86,35 +96,45 @@ public class Main {
 
         Map<Integer, Syndrome> syndromes = GeneratorSyndrome.getGeneratorsSyndrome();
         Map<Polynomial, Polynomial> polynomials = finiteField.getField();
-        int i = 2;
-        for (Map.Entry<Integer, Syndrome> syndrome : syndromes.entrySet()) {
-            System.out.println("I(1, " + i++ + ")");
-            int j = 1;
-            for(int[] partOfSyndrome : syndrome.getValue().getSyndromes()) {
-                Polynomial findPolynome = new Polynomial(partOfSyndrome);
-                System.out.print("degS("+ j++ + ")" + " = ");
-                polynomials.entrySet().stream()
-                        .filter(entry -> entry.getValue().equals(findPolynome))
-                        .findFirst()
-                        .ifPresent(entry -> System.out.print(entry.getKey().degree()));
-                System.out.println();
-            }
-            for(int[] partOfSyndrome : syndrome.getValue().getNormOfSyndrome()) {
-                Polynomial findPolynome = new Polynomial(partOfSyndrome);
-                System.out.print("deg(N(S))" + " = ");
-                polynomials.entrySet().stream()
-                        .filter(entry -> entry.getValue().equals(findPolynome))
-                        .findFirst()
-                        .ifPresent(entry -> System.out.print(entry.getKey().degree()));
-                System.out.println();
-            }
-            System.out.println();
-            System.out.println();
+        printSyndromes(syndromes, polynomials);
+
+        Syndrome syndromeMistakes = GeneratorSyndrome.getSyndromeMistakes(Main.message);
+
+        Integer vector = syndromes.entrySet().stream()
+                .filter(
+                        entry -> {
+                            boolean flag = false;
+                            for (int i = 0; i < entry.getValue().getNormOfSyndrome().size() && i < syndromeMistakes.getNormOfSyndrome().size(); i++) {
+                                if (Arrays.equals(entry.getValue().getNormOfSyndrome().get(i), syndromeMistakes.getNormOfSyndrome().get(i))) {
+                                    flag = true;
+                                } else {
+                                    return false;
+                                }
+                            }
+                            return flag;
+                        }
+                )
+                .findFirst().get().getKey();
+
+
+        int[] partOfSyndrome = syndromes.get(vector).getSyndromes().get(0);
+        Polynomial findPolynome = new Polynomial(partOfSyndrome);
+        int power = polynomials.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(findPolynome))
+                .findFirst().get().getKey().degree();
+        int[] rightMessage = Arrays.copyOf(message, message.length);
+        rightMessage[power] = (rightMessage[1 + power] + 1) % 2;
+        rightMessage[vector + power - 1] = (rightMessage[1 + power] + 1) % 2;
+
+        for (int i = 0; i < message.length; i++) {
+            System.out.print(message[i]);
         }
-
+        System.out.println();
+        for (int i = 0; i < message.length; i++) {
+            System.out.print(rightMessage[i]);
+        }
+        System.out.println();
     }
-
-
 
     private static int[][] getH(Polynomial betta, int order) {
         int[][] H = new int[M][N];
@@ -133,6 +153,34 @@ public class Main {
         }
 
         return H;
+    }
+
+    private static void printSyndromes(Map<Integer, Syndrome> syndromes, Map<Polynomial, Polynomial> polynomials) {
+        int i = 2;
+        for (Map.Entry<Integer, Syndrome> syndrome : syndromes.entrySet()) {
+            System.out.println("I(1, " + i++ + ")");
+            int j = 1;
+            for (int[] partOfSyndrome : syndrome.getValue().getSyndromes()) {
+                Polynomial findPolynome = new Polynomial(partOfSyndrome);
+                System.out.print("degS(" + j++ + ")" + " = ");
+                polynomials.entrySet().stream()
+                        .filter(entry -> entry.getValue().equals(findPolynome))
+                        .findFirst()
+                        .ifPresent(entry -> System.out.print(entry.getKey().degree()));
+                System.out.println();
+            }
+            for (int[] partOfSyndrome : syndrome.getValue().getNormOfSyndrome()) {
+                Polynomial findPolynome = new Polynomial(partOfSyndrome);
+                System.out.print("deg(N(S))" + " = ");
+                polynomials.entrySet().stream()
+                        .filter(entry -> entry.getValue().equals(findPolynome))
+                        .findFirst()
+                        .ifPresent(entry -> System.out.print(entry.getKey().degree()));
+                System.out.println();
+            }
+            System.out.println();
+            System.out.println();
+        }
     }
 
     public static List<int[]> getGammaOrbits(int[] array) {
