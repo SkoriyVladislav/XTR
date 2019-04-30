@@ -53,18 +53,12 @@ public class GeneratorSyndrome {
         Polynomial p2 = new Polynomial(s2);
 
         Map<Polynomial, Polynomial> finiteField = FiniteField.getField();
-        int degree = 30 - finiteField.entrySet().stream().filter(
-                entry -> entry.getValue().equals(p1)).findFirst().get().getKey().degree() + 1 ;
+        int degree = 31 - finiteField.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(p1))
+                .findFirst().get().getKey().degree() ;
 
-        Polynomial test = new Polynomial(1, degree);
-        Polynomial reversed = finiteField.get(test);
-
-        System.out.println(FiniteField.times(FiniteField.getField().get(new Polynomial(1, 16)), FiniteField.getField().get(new Polynomial(1, 15))
-                , Main.M
-                , Main.BASE));
-
+        Polynomial reversed = finiteField.get(new Polynomial(1, degree));
         Polynomial res = FiniteField.times(p2, reversed, Main.M, Main.BASE);
-        res = FiniteField.divideByBase(res, Main.BASE);
         result = res.getCoef();
         normOfSyndrome.add(result);
 

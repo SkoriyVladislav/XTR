@@ -6,6 +6,7 @@ import by.Skoriy.Polynom.Polynomial;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -141,9 +142,14 @@ public class FiniteField {
     public static Polynomial simplify(Polynomial polynomial, int base) {
         divideByBase(polynomial, base);
         int[] coeff = polynomial.getCoef();
-
+        int[] newCoef;
         for(int i = polynomial.degree(); i >= 0; i--) {
-            //if (coeff == )
+            if (coeff[i] != 0) {
+                newCoef = Arrays.copyOf(coeff, i + 1);
+                polynomial.setDeg(i);
+                polynomial.setCoef(newCoef);
+                break;
+            }
         }
         return polynomial;
     }

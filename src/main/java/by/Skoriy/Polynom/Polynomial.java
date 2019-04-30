@@ -80,8 +80,9 @@ public class Polynomial implements Comparable{
         Polynomial a = this;
         Polynomial c = new Polynomial( 0, a.deg + b.deg );
         for( int i = 0; i <= a.deg; i++ )
-            for( int j = 0; j <= b.deg; j++ )
-                c.coef[ i + j ] += ( a.coef[ i ] * b.coef[ j ] );
+            for( int j = 0; j <= b.deg; j++ ) {
+                c.coef[i + j] += (a.coef[i] * b.coef[j]);
+            }
         c.deg = c.degree();
         return c;
     }
@@ -214,12 +215,16 @@ public class Polynomial implements Comparable{
         this.coef = coef;
     }
 
+    public void setDeg(int deg) {
+        this.deg = deg;
+    }
+
     public Polynomial reduction(int baseField) {
         Polynomial p = this;
 
         Polynomial c = new Polynomial( 0, p.deg + 1);
 
-        for (int i = 0; i < p.degree(); i++) {
+        for (int i = 0; i <= p.degree(); i++) {
             if (p.coef[i] >= baseField) {
                 c.coef[i] = p.coef[i] % baseField;
             } else {
