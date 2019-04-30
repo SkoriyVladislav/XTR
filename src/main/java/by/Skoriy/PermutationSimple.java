@@ -79,7 +79,7 @@ public class PermutationSimple {
 
             boolean flag = DistanceUtil.check(H, data, countRow);
             if (flag) {
-                for (int j=0; j<r; j++) {
+                for (int j = 0; j < r; j++) {
                     System.out.print(data[j] + " ");
                 }
                 System.out.println();

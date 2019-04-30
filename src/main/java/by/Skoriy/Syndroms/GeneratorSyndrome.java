@@ -17,7 +17,7 @@ public class GeneratorSyndrome {
             coeff[i] = 1;
 
             List<int[]> syndromes = getSyndrome(coeff);
-            List<int[]> normOfSyndrome = getNormeOfSyndrome(syndromes);
+            List<int[]> normOfSyndrome = getNormOfSyndrome(syndromes);
 
             Syndrome syndrome = new Syndrome(syndromes, normOfSyndrome);
 
@@ -31,7 +31,7 @@ public class GeneratorSyndrome {
 
     public static Syndrome getSyndromeMistakes(int[] coeff) {
         List<int[]> syndromes = getSyndrome(coeff);
-        List<int[]> normOfSyndrome = getNormeOfSyndrome(syndromes);
+        List<int[]> normOfSyndrome = getNormOfSyndrome(syndromes);
 
         Syndrome syndrome = new Syndrome(syndromes, normOfSyndrome);
 
@@ -39,7 +39,6 @@ public class GeneratorSyndrome {
     }
 
     private static List<int []> getSyndrome(int[] coeff) {
-        //TODO refactor this method
         List<int[]> syndromes = new ArrayList<>();
         int[] syndrome = getRowFromColumn(Main.multiplyByMatrix(Main.H1H3, getColumnFromRow(coeff)));
         for (int j = 0; j < syndrome.length; j += Main.M) {
@@ -49,7 +48,7 @@ public class GeneratorSyndrome {
         return syndromes;
     }
 
-    private static List<int []> getNormeOfSyndrome(List<int[]> syndromes) {
+    private static List<int []> getNormOfSyndrome(List<int[]> syndromes) {
         //TODO refactor this method
         List<int[]> normOfSyndrome = new ArrayList<>();
         int[] s1 = syndromes.get(0);
