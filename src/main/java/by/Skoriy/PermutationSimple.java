@@ -3,6 +3,9 @@ package by.Skoriy;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PermutationSimple {
 
@@ -101,5 +104,56 @@ public class PermutationSimple {
             }
         }
         return false;
+    }
+
+    public static List<int[]> getAllGammaOrbits(int arr[], int n, int r, List<int[]> gammaOrbits, Set<List<Integer>> combinations) {
+        // A temporary array to store all combination one by one
+
+        int data[] = new int[r];
+        combinationUtil(arr, data, 0, n-1, 0, r, gammaOrbits, combinations);
+
+        return gammaOrbits;
+    }
+
+    private static void combinationUtil(int arr[], int data[], int start, int end, int index, int r, List<int[]> gammaOrbits, Set<List<Integer>> combinations) {
+        // Current combination is ready to be printed, print it
+        if (index == r) {
+            int[] testData = Arrays.copyOf(data, data.length);
+
+            if (testData[testData.length - 1] - testData[0] > Main.N / 2 + 1) {
+                int temp = testData[0];
+                testData[0] = testData[testData.length - 1];
+                testData[testData.length - 1] = temp;
+            }
+
+            boolean flag = true;
+            Set<List<Integer>> testSet = new HashSet<>();
+            for (int i = 0; i < Main.N; i++) {
+                if (!combinations.contains(IntStream.of(Arrays.copyOf(testData, data.length)).boxed().collect(Collectors.toList()))) {
+                    testSet.add(IntStream.of(Arrays.copyOf(testData, data.length)).boxed().collect(Collectors.toList()));
+                } else {
+                    flag = false;
+                    break;
+                }
+                for (int j = 0; j < data.length; j++) {
+                    testData[j] = (testData[j] +  1) % Main.N;
+                }
+            }
+            if (flag) {
+                combinations.addAll(testSet);
+                gammaOrbits.add(Arrays.copyOf(data, data.length));
+            }
+            return;
+        }
+
+
+        // replace index with all possible elements. The condition
+        // "end-i+1 >= r-index" makes sure that including one element
+        // at index will make a combination with remaining elements
+        // at remaining positions
+        for (int i=start; i<=end && end-i+1 >= r-index; i++) {
+            data[index] = arr[i];
+            combinationUtil(arr, data, i+1, end, index+1, r, gammaOrbits, combinations);
+        }
     }
 }

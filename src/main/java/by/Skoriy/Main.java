@@ -9,8 +9,8 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class Main {
-    public static int N = 31;
-    public static int M = 5;
+    public static int N = 4; //31
+    public static int M = 4; //5
     //public static int POWER_ALPHA = 42799; // (2^21 - 1)/49 = 42799   (2^14-1)/43 = 381
     public static int BASE = 2;
 
@@ -42,7 +42,7 @@ public class Main {
     public static int[][] H1H3;
     public static int[][] H1H3H5;
 
-    static {
+    /*static {
         H1 = getH(Main.getBetta((int) Math.pow(2, M) / N, M, 2), 1);
         int[][] H3 = getH(Main.getBetta((int) Math.pow(2, M) / N, M, 2), 3);
         int[][] H5 = getH(Main.getBetta((int) Math.pow(2, M) / N, M, 2), 5);
@@ -59,10 +59,10 @@ public class Main {
             H1H3H5[i + M] = H3[i];
             H1H3H5[i + 2 * M] = H5[i];
         }
-    }
+    }*/
 
     public static void main(String[] args) {
-        FiniteField finiteField = new FiniteField(BASE, M);
+        /*FiniteField finiteField = new FiniteField(BASE, M);
 
         System.out.println("H1 = ");
         printH(H1, M, N);
@@ -70,17 +70,17 @@ public class Main {
         DistanceUtil.getDistance(H1, M, N);
         System.out.println();
 
-        /*System.out.println("H3 = ");
+        *//*System.out.println("H3 = ");
         printH(H3, M, N);
         System.out.println();
         DistanceUtil.getDistance(H3, M, N);
-        System.out.println();*/
+        System.out.println();*//*
 
-        /*System.out.println("H5 = ");
+        *//*System.out.println("H5 = ");
         printH(H5, M, N);
         System.out.println();
         DistanceUtil.getDistance(H5, M, N);
-        System.out.println();*/
+        System.out.println();*//*
 
         System.out.println("H1H3 = ");
         printH(H1H3, 2 * M, N);
@@ -96,9 +96,9 @@ public class Main {
 
         Map<Integer, Syndrome> syndromes = GeneratorSyndrome.getGeneratorsSyndrome();
         Map<Polynomial, Polynomial> polynomials = finiteField.getField();
-        printSyndromes(syndromes, polynomials);
+        printSyndromes(syndromes, polynomials);*/
 
-        Syndrome syndromeMistakes = GeneratorSyndrome.getSyndromeMistakes(Main.message);
+        /*Syndrome syndromeMistakes = GeneratorSyndrome.getSyndromeMistakes(Main.message);
 
         Integer vector = syndromes.entrySet().stream()
                 .filter(
@@ -133,6 +133,9 @@ public class Main {
         for (int i = 0; i < message.length; i++) {
             System.out.print(rightMessage[i]);
         }
+        System.out.println();
+*/
+        List<int[]> ogb = GammaOrbitsUtil.getGammaOrbits(3);
         System.out.println();
     }
 

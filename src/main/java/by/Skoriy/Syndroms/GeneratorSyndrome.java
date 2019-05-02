@@ -60,9 +60,9 @@ public class GeneratorSyndrome {
         Polynomial p2 = new Polynomial(s2);
 
         Map<Polynomial, Polynomial> finiteField = FiniteField.getField();
-        int degree = (31 - finiteField.entrySet().stream()
+        int degree = (Main.N - finiteField.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(p1))
-                .findFirst().get().getKey().degree()) % 31 ;
+                .findFirst().get().getKey().degree()) % Main.N ;
 
         Polynomial reversed = finiteField.get(new Polynomial(1, degree));
         Polynomial res = FiniteField.times(p2, reversed, Main.M, Main.BASE);

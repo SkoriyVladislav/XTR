@@ -18,7 +18,11 @@ public class Polynomial implements Comparable{
 
     public Polynomial(int[] coeff){
         coef = coeff;
-        this.deg = coeff.length - 1;
+        if (coeff.length == 0) {
+            this.deg = 0;
+        } else {
+            this.deg = coeff.length - 1;
+        }
         simplify();
     }
 
@@ -30,8 +34,13 @@ public class Polynomial implements Comparable{
                 break;
             }
         }
-        coef = newCoef;
-        deg = coef.length - 1;
+        if (newCoef.length == 0) {
+            coef = new int[]{0};
+            deg = 0;
+        } else {
+            coef = newCoef;
+            deg = coef.length - 1;
+        }
     }
 
     public Polynomial( Polynomial p ){
