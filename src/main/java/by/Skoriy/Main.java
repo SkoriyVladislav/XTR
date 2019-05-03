@@ -6,11 +6,13 @@ import by.Skoriy.Syndroms.GeneratorSyndrome;
 import by.Skoriy.Syndroms.Syndrome;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Main {
-    public static int N = 4; //31
-    public static int M = 4; //5
+    public static int N = 31; //31
+    public static int M = 5; //5
     //public static int POWER_ALPHA = 42799; // (2^21 - 1)/49 = 42799   (2^14-1)/43 = 381
     public static int BASE = 2;
 
@@ -42,7 +44,7 @@ public class Main {
     public static int[][] H1H3;
     public static int[][] H1H3H5;
 
-    /*static {
+    static {
         H1 = getH(Main.getBetta((int) Math.pow(2, M) / N, M, 2), 1);
         int[][] H3 = getH(Main.getBetta((int) Math.pow(2, M) / N, M, 2), 3);
         int[][] H5 = getH(Main.getBetta((int) Math.pow(2, M) / N, M, 2), 5);
@@ -59,10 +61,10 @@ public class Main {
             H1H3H5[i + M] = H3[i];
             H1H3H5[i + 2 * M] = H5[i];
         }
-    }*/
+    }
 
     public static void main(String[] args) {
-        /*FiniteField finiteField = new FiniteField(BASE, M);
+        FiniteField finiteField = new FiniteField(BASE, M);
 
         System.out.println("H1 = ");
         printH(H1, M, N);
@@ -70,17 +72,17 @@ public class Main {
         DistanceUtil.getDistance(H1, M, N);
         System.out.println();
 
-        *//*System.out.println("H3 = ");
+        /*System.out.println("H3 = ");
         printH(H3, M, N);
         System.out.println();
         DistanceUtil.getDistance(H3, M, N);
-        System.out.println();*//*
+        System.out.println();
 
-        *//*System.out.println("H5 = ");
+        System.out.println("H5 = ");
         printH(H5, M, N);
         System.out.println();
         DistanceUtil.getDistance(H5, M, N);
-        System.out.println();*//*
+        System.out.println();*/
 
         System.out.println("H1H3 = ");
         printH(H1H3, 2 * M, N);
@@ -94,13 +96,13 @@ public class Main {
         DistanceUtil.getDistance(H1H3H5, 3 * M, N);
         System.out.println();
 
-        Map<Integer, Syndrome> syndromes = GeneratorSyndrome.getGeneratorsSyndrome();
+        Map<int[], Syndrome> syndromes = GeneratorSyndrome.getGeneratorsSyndrome();
         Map<Polynomial, Polynomial> polynomials = finiteField.getField();
-        printSyndromes(syndromes, polynomials);*/
+        printSyndromes(syndromes, polynomials);
 
-        /*Syndrome syndromeMistakes = GeneratorSyndrome.getSyndromeMistakes(Main.message);
+        Syndrome syndromeMistakes = GeneratorSyndrome.getSyndromeMistakes(Main.message);
 
-        Integer vector = syndromes.entrySet().stream()
+        int[] vector = syndromes.entrySet().stream()
                 .filter(
                         entry -> {
                             boolean flag = false;
@@ -124,7 +126,7 @@ public class Main {
                 .findFirst().get().getKey().degree();
         int[] rightMessage = Arrays.copyOf(message, message.length);
         rightMessage[power] = (rightMessage[1 + power] + 1) % 2;
-        rightMessage[vector + power - 1] = (rightMessage[1 + power] + 1) % 2;
+        //rightMessage[vector + power - 1] = (rightMessage[1 + power] + 1) % 2;
 
         for (int i = 0; i < message.length; i++) {
             System.out.print(message[i]);
@@ -134,9 +136,7 @@ public class Main {
             System.out.print(rightMessage[i]);
         }
         System.out.println();
-*/
-        List<int[]> ogb = GammaOrbitsUtil.getGammaOrbits(3);
-        System.out.println();
+
     }
 
     private static int[][] getH(Polynomial betta, int order) {
@@ -158,9 +158,9 @@ public class Main {
         return H;
     }
 
-    private static void printSyndromes(Map<Integer, Syndrome> syndromes, Map<Polynomial, Polynomial> polynomials) {
+    private static void printSyndromes(Map<int[], Syndrome> syndromes, Map<Polynomial, Polynomial> polynomials) {
         int i = 2;
-        for (Map.Entry<Integer, Syndrome> syndrome : syndromes.entrySet()) {
+        for (Map.Entry<int[], Syndrome> syndrome : syndromes.entrySet()) {
             System.out.println("I(1, " + i++ + ")");
             int j = 1;
             for (int[] partOfSyndrome : syndrome.getValue().getSyndromes()) {

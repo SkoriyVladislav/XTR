@@ -120,16 +120,21 @@ public class PermutationSimple {
         if (index == r) {
             int[] testData = Arrays.copyOf(data, data.length);
 
-            if (testData[testData.length - 1] - testData[0] > Main.N / 2 + 1) {
-                int temp = testData[0];
-                testData[0] = testData[testData.length - 1];
-                testData[testData.length - 1] = temp;
+            if (testData[testData.length - 1] - testData[0] >= Main.N / 2 + 1) {
             }
 
             boolean flag = true;
             Set<List<Integer>> testSet = new HashSet<>();
             for (int i = 0; i < Main.N; i++) {
-                if (!combinations.contains(IntStream.of(Arrays.copyOf(testData, data.length)).boxed().collect(Collectors.toList()))) {
+                /*if (testSet.stream().noneMatch(integers -> integers.containsAll(IntStream.of(Arrays.copyOf(testData, data.length)).boxed().collect(Collectors.toList())))) {
+                    testSet.add(IntStream.of(Arrays.copyOf(testData, data.length)).boxed().collect(Collectors.toList()));
+                } else {
+                    flag = false;
+                    break;
+                }*/
+                List<Integer> testList = IntStream.of(Arrays.copyOf(testData, data.length)).boxed().collect(Collectors.toList());
+                testList.sort(Comparator.comparingInt(Integer::intValue));
+                if (!combinations.contains(testList)) {
                     testSet.add(IntStream.of(Arrays.copyOf(testData, data.length)).boxed().collect(Collectors.toList()));
                 } else {
                     flag = false;
