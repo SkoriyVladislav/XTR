@@ -11,8 +11,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Main {
-    public static int N = 31; //31
-    public static int M = 5; //5
+    public static int N = 31; //31  15
+    public static int M = 5;  //5    4
     //public static int POWER_ALPHA = 42799; // (2^21 - 1)/49 = 42799   (2^14-1)/43 = 381
     public static int BASE = 2;
 
@@ -159,9 +159,12 @@ public class Main {
     }
 
     private static void printSyndromes(Map<int[], Syndrome> syndromes, Map<Polynomial, Polynomial> polynomials) {
-        int i = 2;
         for (Map.Entry<int[], Syndrome> syndrome : syndromes.entrySet()) {
-            System.out.println("I(1, " + i++ + ")");
+            System.out.print("I(");
+            for (int i : syndrome.getKey()) {
+                System.out.print((i + 1) + ",");
+            }
+            System.out.print(")\n");
             int j = 1;
             for (int[] partOfSyndrome : syndrome.getValue().getSyndromes()) {
                 Polynomial findPolynome = new Polynomial(partOfSyndrome);
