@@ -55,7 +55,7 @@ public class IrreduciblePolynomials {
 
         irreduciblePolynomials.put(new Polynomial(1, 5), new Polynomial(1,2).plus(new Polynomial(1, 0))); //x^5+x^2+1
 
-        irreduciblePolynomials.put(new Polynomial(1, 6), new Polynomial(1,1).plus(new Polynomial(1, 0))); //x^5+x+1
+        irreduciblePolynomials.put(new Polynomial(1, 6), new Polynomial(1,1).plus(new Polynomial(1, 0))); //x^6+x+1
     }
 
     public static Polynomial getIrreduciblePolynomials(int degree) {

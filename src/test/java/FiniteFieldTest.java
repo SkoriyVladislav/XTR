@@ -24,18 +24,6 @@ public class FiniteFieldTest {
     @Test
     public void testMultiplyByMatrix() {
 
-        int[][] array = Main.H1H3;
-
-        int[][] array2 = getColumnFromRow(Main.message_kul);
-
-        int[][] arr = multiplyByMatrix(array, array2);
-
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array2[0].length; j++) {
-                System.out.print(arr[i][j]);
-            }
-            System.out.println();
-        }
     }
 
     private static int[][] getColumnFromRow(int[] matrix) {

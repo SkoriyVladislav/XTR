@@ -18,7 +18,8 @@ public class GeneratorSyndrome {
                     .map(i -> compare(o1[i], o2[i]))
                     .toArray();
             int returned = IntStream.range(0, arr.length).filter(value -> arr[value] != 0).findFirst().orElse(0);
-            return returned;
+            int ret = arr[returned];
+            return ret;
         } else {
             return o1.length - o2.length;
         }
@@ -55,7 +56,8 @@ public class GeneratorSyndrome {
 
     private static List<int []> getSyndrome(int[] coeff) {
         List<int[]> syndromes = new ArrayList<>();
-        int[] syndrome = getRowFromColumn(Main.multiplyByMatrix(Main.H1H3, getColumnFromRow(coeff)));
+
+        int[] syndrome = getRowFromColumn(Main.multiplyByMatrix(Main.H1H3H5, getColumnFromRow(coeff)));
         for (int j = 0; j < syndrome.length; j += Main.M) {
             int[] subSyndrome = Arrays.copyOfRange(syndrome, j, j + Main.M);
             syndromes.add(subSyndrome);
@@ -80,7 +82,8 @@ public class GeneratorSyndrome {
 
             Polynomial temp = new Polynomial(s1);
             Polynomial p1 = FiniteField.divideByBase(FiniteField.getPolynomInDegree(temp, j * 2 + 1, Main.M, Main.BASE), Main.BASE).reduction(Main.BASE);
-            Polynomial p2 = new Polynomial(si);
+            Polynomial temp2 = new Polynomial(si);
+            Polynomial p2 = FiniteField.divideByBase(FiniteField.getPolynomInDegree(temp2, i * 2 + 1, Main.M, Main.BASE), Main.BASE).reduction(Main.BASE);
 
             int degree = 0;
             Map<Polynomial, Polynomial> finiteField = FiniteField.getField();

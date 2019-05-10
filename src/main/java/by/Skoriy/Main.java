@@ -6,9 +6,6 @@ import by.Skoriy.Syndroms.GeneratorSyndrome;
 import by.Skoriy.Syndroms.Syndrome;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class Main {
     public static int N = 31; //31  15
@@ -17,16 +14,16 @@ public class Main {
     public static int BASE = 2;
 
     public static int[] message_for_31 = new int[]{
-            1, 0, 1,
+            0, 0, 1,
             0, 1, 1,
             0, 1, 1,
             1, 0, 0,
             0, 0, 0,
             1, 0, 0,
-            0, 1, 0,
+            0, 0, 0,
             0, 0, 0,
             1, 0, 0,
-            0, 1, 0, 1};
+            0, 0, 0, 1};
 
     public static int[] message_for_15 = new int[]{
             0, 0, 1,
@@ -35,8 +32,17 @@ public class Main {
             1, 0, 0,
             0, 0, 0};
 
-    public static int[] message_kul = new int[]{0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 1};
+    public static int[] right_message = new int[]{
+            0, 0, 1,
+            0, 1, 1,
+            0, 1, 1,
+            1, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            1, 1, 1,
+            0, 0, 0, 1};
 
     public static Polynomial betta = new Polynomial(1, 16).plus(
             new Polynomial(1, 13).plus(
@@ -74,17 +80,11 @@ public class Main {
     }
 
 
-    public static int SIZE_GAMMA_ORBITS = 2;
-    public static int[] message = message_for_31;
+    public static int SIZE_GAMMA_ORBITS = 3;
+    public static int[] message = right_message;
 
     public static void main(String[] args) {
         FiniteField finiteField = new FiniteField(BASE, M);
-
-        int[][] array = {{1,1,1}, {2,2,2},{3,3,3}};
-
-        int[][] array2 = {{1}, {1},{1}};
-
-        int[][] arr = multiplyByMatrix(array, array2);
 
         System.out.println("H1 = ");
         printH(H1, M, N);
@@ -116,8 +116,9 @@ public class Main {
         DistanceUtil.getDistance(H1H3H5, 3 * M, N);
         System.out.println();
 
-        Map<int[], Syndrome> syndromes = GeneratorSyndrome.getGeneratorsSyndrome();
+
         Map<Polynomial, Polynomial> polynomials = finiteField.getField();
+        Map<int[], Syndrome> syndromes = GeneratorSyndrome.getGeneratorsSyndrome();
         printSyndromes(syndromes, polynomials);
 
         Syndrome syndromeMistakes = GeneratorSyndrome.getSyndromeMistakes(Main.message);
@@ -125,7 +126,9 @@ public class Main {
         mist.put(new int[]{0, 0, 0}, syndromeMistakes);
         printSyndromes(mist, polynomials);
 
-        int[] vector = syndromes.entrySet().stream()
+        int[] vector = null;
+        Syndrome syndrome = null;
+        Optional<Map.Entry<int[], Syndrome>> optional = syndromes.entrySet().stream()
                 .filter(
                         entry -> {
                             boolean flag = false;
@@ -138,32 +141,136 @@ public class Main {
                             }
                             return flag;
                         }
-                )
-                .findFirst().get().getKey();
+                ).findFirst();
 
-        int[] partOfSyndrome = syndromes.get(vector).getSyndromes().get(0);
-        Polynomial findPolynome = new Polynomial(partOfSyndrome);
-        int power = polynomials.entrySet().stream()
-                .filter(entry -> entry.getValue().equals(findPolynome))
-                .findFirst().get().getKey().degree();
-        int[] rightMessage = Arrays.copyOf(message, message.length);
+        if(optional.isPresent()) {
+            vector = optional.get().getKey();
+            syndrome = optional.get().getValue();
+        }
 
-        int sdvig = Main.N - power;
-        for (int i : vector) {
-            rightMessage[1 + i + sdvig] = (rightMessage[1 + i + sdvig] + 1) % 2;
-        }
-        //rightMessage[vector + power - 1] = (rightMessage[1 + power] + 1) % 2;
+        if(vector != null) {
+            for (int vec : vector) {
+                System.out.print(vec);
+            }
+            System.out.println();
 
-        for (int i = 0; i < message.length; i++) {
-            System.out.print(message[i]);
+            int[] partOfSyndrome = syndrome.getSyndromes().get(0);
+            Polynomial findPolynome = new Polynomial(partOfSyndrome);
+            int power = polynomials.entrySet().stream()
+                    .filter(entry -> entry.getValue().equals(findPolynome))
+                    .findFirst().get().getKey().degree();
+
+            int[] partOfSyndromeMistake = syndromeMistakes.getSyndromes().get(0);
+            Polynomial findPolynomeMistake = new Polynomial(partOfSyndromeMistake);
+            int power_of_mistake =  polynomials.entrySet().stream()
+                    .filter(entry -> entry.getValue().equals(findPolynomeMistake))
+                    .findFirst().get().getKey().degree();
+
+            int[] rightMessage = Arrays.copyOf(message, message.length);
+            System.out.println("Power = " + power);
+            int sdvig = (power_of_mistake - power + 31) % 31;
+            System.out.println("Sdvig = " + sdvig);
+            for (int i : vector) {
+                rightMessage[(i + sdvig) % 31] = (rightMessage[(i + sdvig) % 31] + 1) % 2;
+            }
+            //rightMessage[vector + power - 1] = (rightMessage[1 + power] + 1) % 2;
+
+            for (int i = 0; i < message.length; i++) {
+                if (i != 0 && i % 3 == 0) {
+                    System.out.print(" ");
+                }
+                System.out.print(message[i]);
+            }
+            System.out.println();
+            for (int i = 0; i < message.length; i++) {
+                if (i != 0 && i % 3 == 0) {
+                    System.out.print(" ");
+                }
+                System.out.print(rightMessage[i]);
+            }
+            System.out.println();
+        } else {
+            System.out.println("Vector = null.");
         }
-        System.out.println();
-        for (int i = 0; i < message.length; i++) {
-            System.out.print(rightMessage[i]);
-        }
-        System.out.println();
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private static int[][] getH(Polynomial betta, int order) {
         int[][] H = new int[M][N];
