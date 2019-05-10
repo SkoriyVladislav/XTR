@@ -16,7 +16,9 @@ public class GammaOrbitsUtil {
                 arr[j] = j;
             }
             int n = arr.length;
-            gammaOrbits = PermutationSimple.getAllGammaOrbits(arr, n, i, gammaOrbits, combinations);
+            for (int j = size; j < n; j++) {
+                gammaOrbits = PermutationSimple.getAllGammaOrbits(arr, j, i, gammaOrbits, combinations);
+            }
         }
 
         return gammaOrbits;
