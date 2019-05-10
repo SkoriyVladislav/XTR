@@ -137,7 +137,7 @@ public class FiniteField {
             polynomial = polynomial.remainder(generating);
             return simplify(polynomial, base);
         }
-        return  simplify(polynomial, base);
+        return  polynomial;
     }
 
     public static Polynomial simplify(Polynomial polynomial, int base) {

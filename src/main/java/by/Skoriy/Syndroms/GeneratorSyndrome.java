@@ -17,14 +17,13 @@ public class GeneratorSyndrome {
             int[] arr = IntStream.range(0, o1.length)
                     .map(i -> compare(o1[i], o2[i]))
                     .toArray();
-            int returned = IntStream.range(0, arr.length).filter(value -> arr[value] != 0).findFirst().orElse(0);
-            return returned;
+            return IntStream.range(0, arr.length).filter(value -> value != 0).findFirst().orElse(0);
         } else {
             return o1.length - o2.length;
         }
     });
     static {
-        List<int[]> orbits = GammaOrbitsUtil.getGammaOrbits(Main.SIZE_GAMMA_ORBITS);
+        List<int[]> orbits = GammaOrbitsUtil.getGammaOrbits(2);
         for (int[] orbit : orbits) {
             int[] coeff = new int[Main.N];
             for(int index : orbit) {
