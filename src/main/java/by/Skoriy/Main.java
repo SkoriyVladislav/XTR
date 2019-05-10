@@ -6,6 +6,9 @@ import by.Skoriy.Syndroms.GeneratorSyndrome;
 import by.Skoriy.Syndroms.Syndrome;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Main {
     public static int N = 31; //31  15
@@ -13,17 +16,27 @@ public class Main {
     //public static int POWER_ALPHA = 42799; // (2^21 - 1)/49 = 42799   (2^14-1)/43 = 381
     public static int BASE = 2;
 
-    public static int[] message = new int[]{
+    public static int[] message_for_31 = new int[]{
+            1, 0, 1,
+            0, 1, 1,
+            0, 1, 1,
+            1, 0, 0,
+            0, 0, 0,
+            1, 0, 0,
+            0, 1, 0,
+            0, 0, 0,
+            1, 0, 0,
+            0, 1, 0, 1};
+
+    public static int[] message_for_15 = new int[]{
             0, 0, 1,
             0, 1, 1,
             0, 1, 1,
             1, 0, 0,
-            0, 0, 0,
-            1, 0, 0,
-            0, 0, 0,
-            0, 0, 0,
-            1, 0, 0,
-            0, 0, 0, 1};
+            0, 0, 0};
+
+    public static int[] message_kul = new int[]{0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 1};
 
     public static Polynomial betta = new Polynomial(1, 16).plus(
             new Polynomial(1, 13).plus(
@@ -60,8 +73,18 @@ public class Main {
         }
     }
 
+
+    public static int SIZE_GAMMA_ORBITS = 2;
+    public static int[] message = message_for_31;
+
     public static void main(String[] args) {
         FiniteField finiteField = new FiniteField(BASE, M);
+
+        int[][] array = {{1,1,1}, {2,2,2},{3,3,3}};
+
+        int[][] array2 = {{1}, {1},{1}};
+
+        int[][] arr = multiplyByMatrix(array, array2);
 
         System.out.println("H1 = ");
         printH(H1, M, N);
@@ -98,6 +121,9 @@ public class Main {
         printSyndromes(syndromes, polynomials);
 
         Syndrome syndromeMistakes = GeneratorSyndrome.getSyndromeMistakes(Main.message);
+        Map<int[], Syndrome> mist = new HashMap<>();
+        mist.put(new int[]{0, 0, 0}, syndromeMistakes);
+        printSyndromes(mist, polynomials);
 
         int[] vector = syndromes.entrySet().stream()
                 .filter(
@@ -115,14 +141,17 @@ public class Main {
                 )
                 .findFirst().get().getKey();
 
-
         int[] partOfSyndrome = syndromes.get(vector).getSyndromes().get(0);
         Polynomial findPolynome = new Polynomial(partOfSyndrome);
         int power = polynomials.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(findPolynome))
                 .findFirst().get().getKey().degree();
         int[] rightMessage = Arrays.copyOf(message, message.length);
-        rightMessage[power] = (rightMessage[1 + power] + 1) % 2;
+
+        int sdvig = Main.N - power;
+        for (int i : vector) {
+            rightMessage[1 + i + sdvig] = (rightMessage[1 + i + sdvig] + 1) % 2;
+        }
         //rightMessage[vector + power - 1] = (rightMessage[1 + power] + 1) % 2;
 
         for (int i = 0; i < message.length; i++) {
