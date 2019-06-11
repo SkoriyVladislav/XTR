@@ -31,6 +31,12 @@ public class IrreduciblePolynomials {
                     new Polynomial(1, 1)).plus(
                         new Polynomial(1, 0))); //x^26+x^6+x^2+x+1
 
+
+        irreduciblePolynomials.put(new Polynomial(1, 12), new Polynomial(1,6).plus(
+                new Polynomial(1, 4)).plus(
+                new Polynomial(1, 1)).plus(
+                new Polynomial(1, 0))); //x^12+x^6+x^4+x+1
+
         irreduciblePolynomials.put( new Polynomial(1, 35), new Polynomial(1,34).plus(
                 new Polynomial(1, 31)).plus(
                         new Polynomial(1, 29)).plus(
@@ -56,6 +62,13 @@ public class IrreduciblePolynomials {
         irreduciblePolynomials.put(new Polynomial(1, 5), new Polynomial(1,2).plus(new Polynomial(1, 0))); //x^5+x^2+1
 
         irreduciblePolynomials.put(new Polynomial(1, 6), new Polynomial(1,1).plus(new Polynomial(1, 0))); //x^6+x+1
+
+        irreduciblePolynomials.put(new Polynomial(1, 10), new Polynomial(1,3).plus(new Polynomial(1, 0))); //x^6+x+1
+
+        irreduciblePolynomials.put( new Polynomial(1, 8), new Polynomial(1,4).plus(
+                new Polynomial(1, 3)).plus(
+                new Polynomial(1, 2)).plus(
+                new Polynomial(1, 0))); // x^7 + x^6 + x^5 + x^4 + x^3 + x^2 + 1
     }
 
     public static Polynomial getIrreduciblePolynomials(int degree) {

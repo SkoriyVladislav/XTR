@@ -47,6 +47,7 @@ public class GeneratorSyndrome {
 
     public static Syndrome getSyndromeMistakes(int[] coeff) {
         List<int[]> syndromes = getSyndrome(coeff);
+        System.out.println(syndromes.size());
         List<int[]> normOfSyndrome = getNormOfSyndrome(syndromes);
 
         Syndrome syndrome = new Syndrome(syndromes, normOfSyndrome);
@@ -57,7 +58,7 @@ public class GeneratorSyndrome {
     private static List<int []> getSyndrome(int[] coeff) {
         List<int[]> syndromes = new ArrayList<>();
 
-        int[] syndrome = getRowFromColumn(Main.multiplyByMatrix(Main.H1H3H5, getColumnFromRow(coeff)));
+        int[] syndrome = getRowFromColumn(Main.multiplyByMatrix(Main.H1H3H5H7, getColumnFromRow(coeff)));
         for (int j = 0; j < syndrome.length; j += Main.M) {
             int[] subSyndrome = Arrays.copyOfRange(syndrome, j, j + Main.M);
             syndromes.add(subSyndrome);

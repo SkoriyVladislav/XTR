@@ -9,7 +9,8 @@ public class GammaOrbitsUtil {
     public static List<int[]> getGammaOrbits(int size) {
         List<int[]> gammaOrbits = new ArrayList<>();
         Set<List<Integer>> combinations = new HashSet<>();
-        for (int i = size; i <= size; i++) {
+        int sizeOfIOrbits = 0;
+        for (int i = 9; i <= size; i++) {
 
             int[] arr = new int[Main.N];
             for (int j = 0; j < Main.N; j++) {
@@ -19,6 +20,8 @@ public class GammaOrbitsUtil {
             for (int j = size; j < n; j++) {
                 gammaOrbits = PermutationSimple.getAllGammaOrbits(arr, j, i, gammaOrbits, combinations);
             }
+            System.out.println(i + "-ых ошибок = " + (gammaOrbits.size() - sizeOfIOrbits));
+            sizeOfIOrbits = gammaOrbits.size();
         }
 
         return gammaOrbits;

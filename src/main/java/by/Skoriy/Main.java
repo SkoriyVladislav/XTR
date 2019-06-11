@@ -8,41 +8,71 @@ import by.Skoriy.Syndroms.Syndrome;
 import java.util.*;
 
 public class Main {
-    public static int N = 15; //31  15
-    public static int M = 4;  //5    4
+    public static int N = 31; //31        15               63              43
+    public static int M = 5;  //5      4,8,12              6              14(6, 13, 13)
     //public static int POWER_ALPHA = 42799; // (2^21 - 1)/49 = 42799   (2^14-1)/43 = 381
     public static int BASE = 2;
 
     public static int[] message_for_31 = new int[]{
+            1, 1, 1,
+            0, 1, 0,
+            1, 1, 1,
+            1, 1, 0,
             0, 0, 1,
-            0, 1, 1,
-            0, 1, 1,
-            1, 0, 0,
-            0, 0, 0,
-            1, 0, 0,
             0, 0, 0,
             0, 0, 0,
-            1, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
             0, 0, 0, 1};
 
     public static int[] message_for_15 = new int[]{
-            1, 1, 1,
-            1, 1, 1,
-            0, 1, 1,
+            0, 0, 0,
+            1, 1, 0,
+            0, 1, 0,
+            0, 0, 0,
+            0, 0, 1};
+
+    public static int[] right_message_for_15 = new int[]{
+            1, 1, 0,
+            1, 1, 0,
+            0, 1, 0,
             1, 0, 0,
             0, 0, 1};
 
-    public static int[] right_message = new int[]{
-            0, 0, 1,
-            0, 1, 1,
-            0, 1, 1,
-            1, 0, 0,
-            0, 0, 0,
-            0, 0, 0,
-            0, 0, 0,
-            0, 0, 0,
+    public static int[] right_message_for_31 = new int[]{
             1, 1, 1,
-            0, 0, 0, 1};
+            0, 1, 0,
+            0, 1, 1,
+            1, 1, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 1, 0, 1};
+
+    public static int[] right_message_for_63 = new int[] {
+            1, 0, 1,
+            0, 0, 1,
+            1, 0, 1,
+            0, 0, 0,
+            0, 0, 1,
+            1, 0, 1,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 1, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 0,
+            0, 0, 1};
 
     public static Polynomial betta = new Polynomial(1, 16).plus(
             new Polynomial(1, 13).plus(
@@ -59,11 +89,13 @@ public class Main {
     public static int[][] H1;
     public static int[][] H1H3;
     public static int[][] H1H3H5;
+    public static int[][] H1H3H5H7;
 
     static {
         H1 = getH(Main.getBetta((int) Math.pow(2, M) / N, M, 2), 1);
         int[][] H3 = getH(Main.getBetta((int) Math.pow(2, M) / N, M, 2), 3);
         int[][] H5 = getH(Main.getBetta((int) Math.pow(2, M) / N, M, 2), 5);
+        int[][] H7 = getH(Main.getBetta((int) Math.pow(2, M) / N, M, 2), 7);
 
         H1H3 = new int[2 * M][N];
         for (int i = 0; i < M; i++) {
@@ -77,16 +109,23 @@ public class Main {
             H1H3H5[i + M] = H3[i];
             H1H3H5[i + 2 * M] = H5[i];
         }
+
+        H1H3H5H7 = new int[4 * M][N];
+        for (int i = 0; i < M; i++) {
+            H1H3H5H7[i] = H1[i];
+            H1H3H5H7[i + M] = H3[i];
+            H1H3H5H7[i + 2 * M] = H5[i];
+            H1H3H5H7[i + 3 * M] = H7[i];
+        }
     }
 
 
-    public static int SIZE_GAMMA_ORBITS = 3;
-    public static int[] message = message_for_15;
+    public static int SIZE_GAMMA_ORBITS = 11;
+    public static int[] message = right_message_for_31;
 
     public static void main(String[] args) {
         FiniteField finiteField = new FiniteField(BASE, M);
 
-        System.out.println("H1 = ");
         printH(H1, M, N);
         System.out.println();
         DistanceUtil.getDistance(H1, M, N);
@@ -116,10 +155,17 @@ public class Main {
         DistanceUtil.getDistance(H1H3H5, 3 * M, N);
         System.out.println();
 
+        System.out.println("H1H3H5H7 = ");
+        printH(H1H3H5H7, 4 * M, N);
+        System.out.println();
+        DistanceUtil.getDistance(H1H3H5H7, 4 * M, N);
+        System.out.println();
 
         Map<Polynomial, Polynomial> polynomials = finiteField.getField();
         Map<int[], Syndrome> syndromes = GeneratorSyndrome.getGeneratorsSyndrome();
         printSyndromes(syndromes, polynomials);
+
+        System.out.println(syndromes.size());
 
         Syndrome syndromeMistakes = GeneratorSyndrome.getSyndromeMistakes(Main.message);
         Map<int[], Syndrome> mist = new HashMap<>();
@@ -168,10 +214,10 @@ public class Main {
 
             int[] rightMessage = Arrays.copyOf(message, message.length);
             System.out.println("Power = " + power);
-            int sdvig = (power_of_mistake - power + 31) % 31;
+            int sdvig = (power_of_mistake - power + message.length) % message.length;
             System.out.println("Sdvig = " + sdvig);
             for (int i : vector) {
-                rightMessage[(i + sdvig) % 31] = (rightMessage[(i + sdvig) % 31] + 1) % 2;
+                rightMessage[(i + sdvig) % message.length] = (rightMessage[(i + sdvig) % message.length] + 1) % 2;
             }
             //rightMessage[vector + power - 1] = (rightMessage[1 + power] + 1) % 2;
 
@@ -291,7 +337,7 @@ public class Main {
         return H;
     }
 
-    private static void printSyndromes(Map<int[], Syndrome> syndromes, Map<Polynomial, Polynomial> polynomials) {
+    public static void printSyndromes(Map<int[], Syndrome> syndromes, Map<Polynomial, Polynomial> polynomials) {
         for (Map.Entry<int[], Syndrome> syndrome : syndromes.entrySet()) {
             System.out.print("I(");
             for (int i : syndrome.getKey()) {
@@ -337,12 +383,18 @@ public class Main {
     private static void printH(int[][] H1, int countRow, int countColumn) {
         for (int i = 0; i < countRow; i++) {
             int sum = 0;
+
+            System.out.print("{");
+
             for (int j = 0; j < countColumn; j++) {
                 sum += H1[i][j];
-                System.out.print(H1[i][j]);
+                System.out.print(H1[i][j] + ", ");
             }
-            System.out.print(" = " + sum);
+
+            System.out.print("}");
+            //System.out.print(" = " + sum);
             System.out.println();
+
         }
     }
 
@@ -380,6 +432,14 @@ public class Main {
             }
         }
         return mResult;
+    }
+
+    public static int[] generateMistakes(int[] message, int countMist) {
+        int[] newMessage = Arrays.copyOf(message, message.length);
+        for (int i = 0; i < countMist; i++) {
+            newMessage[new Random().nextInt(message.length)] = (message[new Random().nextInt(message.length)] + 1) % 2;
+        }
+        return newMessage;
     }
 
     /*
